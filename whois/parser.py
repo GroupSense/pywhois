@@ -92,7 +92,7 @@ class WhoisEntry(object):
             setattr(self, attr, values)
             return getattr(self, attr)
         else:
-            raise KeyError('Unknown attribute: %s' % attr)
+            raise AttributeError('Unknown attribute: %s' % attr)
 
     def __str__(self):
         """Print all whois properties of domain
