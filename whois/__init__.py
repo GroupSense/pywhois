@@ -45,7 +45,7 @@ def extract_domain(url):
         # this is an IP address
         return socket.gethostbyaddr(url)[0]
 
-    tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'tlds.txt')
+    tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'data', 'tlds.txt')
     suffixes = [
         line.lower().strip()
         for line in open(tlds_path).readlines()

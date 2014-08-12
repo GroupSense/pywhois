@@ -23,6 +23,9 @@ setup(
     license='MIT',
     packages=['whois'],
     package_dir={'whois':'whois'},
+    package_data={
+        'whois': ['data/*.txt']
+    },
     include_package_data=True,
     zip_safe=False,
 )
