@@ -60,6 +60,7 @@ class WhoisEntry(object):
         'name_servers':     'Name Server:\s?(.+)', # list of name servers
         'status':           'Status:\s?(.+)', # list of statuses
         'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}', # list of email addresses
+        'dnssec':           'dnssec:\s*([\S]+)',
     }
 
     def __init__(self, domain, text, regex=None):
@@ -463,7 +464,7 @@ class WhoisFi(WhoisEntry):
         'expiration_date':                'expires:\s*([\S]+)',
         'name_servers':                   'nserver:\s*([\S]+) \[\S+\]',  # list of name servers
         'name_server_statuses':           'nserver:\s*([\S]+) \[(\S+)\]',  # list of name servers and statuses
-        'dnssec':                   'dnssec:\s*([\S]+)',
+        'dnssec':                         'dnssec:\s*([\S]+)',
 	}
     def __init__(self, domain, text):
         if 'Domain not ' in text:
