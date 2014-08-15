@@ -127,12 +127,15 @@ class NICClient(object):
         """send takes bytes as an input
         """
         queryBytes = None
+        if type(query) is not unicode:
+            query = query.decode('utf-8')
+
         if (hostname == NICClient.DENICHOST):
             # print 'the domain is in NIC DENIC'
-            queryBytes = ("-T dn,ace -C UTF-8 " + query + "\r\n").encode()
+            queryBytes = ("-T dn,ace -C UTF-8 " + query + "\r\n").encode('idna')
             # print 'queryBytes:', queryBytes
         else:
-            queryBytes = (query + "\r\n").encode()
+            queryBytes = (query + "\r\n").encode('idna')
         s.send(queryBytes)
         """recv returns bytes
         """
