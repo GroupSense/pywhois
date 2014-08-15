@@ -7,19 +7,23 @@ from parser import WhoisEntry
 from whois import NICClient
 
 
-def whois(url):
+def whois(url, experimental=False):
     # clean domain to expose netloc
     ip_match = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", url)
     if ip_match:
         domain = url
     else:
         domain = extract_domain(url)
-    try:
-        # try native whois command first
-        r = subprocess.Popen(['whois', domain], stdout=subprocess.PIPE)
-        text = r.stdout.read()
-    except OSError:
-        # try experimental client
+    if not experimental:
+        try:
+            # try native whois command first
+            r = subprocess.Popen(['whois', domain], stdout=subprocess.PIPE)
+            text = r.stdout.read()
+        except OSError:
+            # try experimental client
+            nic_client = NICClient()
+            text = nic_client.whois_lookup(None, domain, 0)
+    else:
         nic_client = NICClient()
         text = nic_client.whois_lookup(None, domain, 0)
     return WhoisEntry.load(domain, text)
