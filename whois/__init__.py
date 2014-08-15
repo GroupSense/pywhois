@@ -58,12 +58,17 @@ def extract_domain(url):
 
     url = re.sub('^.*://', '', url).split('/')[0].lower()
     domain = []
-    for section in url.split('.'):
+    url_sections = (
+        section.decode('utf-8').encode('idna')
+        for section in url.split('.')
+    )
+
+    for section in url_sections:
         if section in suffixes:
             domain.append(section)
         else:
             domain = [section]
-    return '.'.join(domain)
+    return '.'.join(domain).decode('idna').encode('utf-8')
 
 
 if __name__ == '__main__':
