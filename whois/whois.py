@@ -164,6 +164,8 @@ class NICClient(object):
 
     def choose_server(self, domain):
         """Choose initial lookup NIC host"""
+        if type(domain) is not unicode:
+            domain = domain.decode('utf-8').encode('idna')
         if (domain.endswith("-NORID")):
             return NICClient.NORIDHOST
         pos = domain.rfind('.')
