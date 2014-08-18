@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # parser.py - Module for parsing whois response data
 # Copyright (c) 2008 Andrey Petrov
 #
@@ -158,6 +160,8 @@ class WhoisEntry(object):
             return WhoisPt(domain, text)
         elif domain.endswith('.bg'):
             return WhoisBg(domain, text)
+        elif domain.endswith('.рф'):
+            return WhoisRf(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -612,6 +616,19 @@ class WhoisBg(WhoisEntry):
 
     regex = {
         'expiration_date': 'expires at:\s*(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if text.strip() == 'No entries found':
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+class WhoisRf(WhoisEntry):
+    """Whois parser for .bg domains"""
+
+    regex = {
+        'expiration_date': 'free-date:\s*(.+)',
     }
 
     def __init__(self, domain, text):
