@@ -56,14 +56,12 @@ def extract_domain(url):
         if not line.startswith('#')
     ]
 
-    url = re.sub('^.*://', '', url).split('/')[0].lower()
+    if type(url) is not unicode:
+        url = url.decode('utf-8')
+    url = re.sub('^.*://', '', url.encode('idna')).split('/')[0].lower()
     domain = []
-    url_sections = (
-        section.decode('utf-8').encode('idna')
-        for section in url.split('.')
-    )
 
-    for section in url_sections:
+    for section in url.split('.'):
         if section in suffixes:
             domain.append(section)
         else:
