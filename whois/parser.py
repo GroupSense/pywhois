@@ -9,7 +9,7 @@
 import re
 try:
     import dateutil.parser as dp
-    from whois.time_zones import tz_data
+    from time_zones import tz_data
     DATEUTIL = True
 except ImportError:
     from datetime import datetime
