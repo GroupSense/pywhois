@@ -26,6 +26,9 @@ setup(
     package_data={
         'whois': ['data/*.txt']
     },
+    extras_require={
+        'better date conversion': ["python-dateutil"]
+    },
     include_package_data=True,
     zip_safe=False,
 )

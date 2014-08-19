@@ -7,43 +7,60 @@
 # the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 import re
-from datetime import datetime
-   
+try:
+    import dateutil.parser as dp
+    from whois.time_zones import tz_data
+    DATEUTIL = True
+except ImportError:
+    from datetime import datetime
+    DATEUTIL = False
+
+KNOWN_FORMATS = [
+    '%d-%b-%Y', 				# 02-jan-2000
+    '%Y-%m-%d', 				# 2000-01-02
+    '%d.%m.%Y', 				# 2.1.2000
+    '%Y.%m.%d',                 # 2000.01.02
+    '%Y/%m/%d',                 # 2000/01/02
+    '%d/%m/%Y',                 # 02/01/2013
+    '%Y. %m. %d.',              # 2000. 01. 02.
+    '%Y.%m.%d %H:%M:%S',        # 2014.03.08 10:28:24
+    '%d-%b-%Y %H:%M:%S %Z',		# 24-Jul-2009 13:20:03 UTC
+    '%a %b %d %H:%M:%S %Z %Y',  # Tue Jun 21 23:59:59 GMT 2011
+    '%Y-%m-%dT%H:%M:%SZ',       # 2007-01-26T19:10:31Z
+    '%Y-%m-%dT%H:%M:%S%z',      # 2013-12-06T08:17:22-0800
+    '%Y-%m-%d %H:%M:%SZ',       # 2000-08-22 18:55:20Z
+    '%Y-%m-%d %H:%M:%S',        # 2000-08-22 18:55:20
+    '%d %b %Y %H:%M:%S',        # 08 Apr 2013 05:44:00
+    '%d/%m/%Y %H:%M:%S',     # 23/04/2015 12:00:07 EEST
+    '%d/%m/%Y %H:%M:%S %Z',     # 23/04/2015 12:00:07 EEST
+    '%d/%m/%Y %H:%M:%S.%f %Z',  # 23/04/2015 12:00:07.619546 EEST
+]
+
 
 class PywhoisError(Exception):
     pass
 
 
-def cast_date(s):
-    """Convert any date string found in WHOIS to a datetime object.
-    """
-    known_formats = [
-        '%d-%b-%Y', 				# 02-jan-2000
-        '%Y-%m-%d', 				# 2000-01-02
-        '%d.%m.%Y', 				# 2.1.2000
-        '%Y.%m.%d',                 # 2000.01.02
-        '%Y/%m/%d',                 # 2000/01/02
-        '%d/%m/%Y',                 # 02/01/2013
-        '%Y. %m. %d.',              # 2000. 01. 02.
-        '%Y.%m.%d %H:%M:%S',        # 2014.03.08 10:28:24
-        '%d-%b-%Y %H:%M:%S %Z',		# 24-Jul-2009 13:20:03 UTC
-        '%a %b %d %H:%M:%S %Z %Y',  # Tue Jun 21 23:59:59 GMT 2011
-        '%Y-%m-%dT%H:%M:%SZ',       # 2007-01-26T19:10:31Z
-        '%Y-%m-%dT%H:%M:%S%z',      # 2013-12-06T08:17:22-0800
-        '%Y-%m-%d %H:%M:%SZ',       # 2000-08-22 18:55:20Z
-        '%Y-%m-%d %H:%M:%S',        # 2000-08-22 18:55:20
-        '%d %b %Y %H:%M:%S',        # 08 Apr 2013 05:44:00
-        '%d/%m/%Y %H:%M:%S %Z',     # 23/04/2015 12:00:07 EEST
-        '%d/%m/%Y %H:%M:%S.%f %Z',  # 23/04/2015 12:00:07.619546 EEST
-    ]
-
-    for known_format in known_formats:
+def datetime_parse(s):
+    for known_format in KNOWN_FORMATS:
         try:
             s = datetime.strptime(s.strip(), known_format)
             break
         except ValueError as e:
-            pass # Wrong format, keep trying
+            pass  # Wrong format, keep trying
     return s
+
+
+def cast_date(s):
+    """Convert any date string found in WHOIS to a datetime object.
+    """
+    if DATEUTIL:
+        try:
+            return dp.parse(s.strip(), tzinfos=tz_data)
+        except Exception:
+            return datetime_parse(s)
+    else:
+        return datetime_parse(s)
 
 
 class WhoisEntry(object):
