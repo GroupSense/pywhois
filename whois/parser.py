@@ -56,7 +56,7 @@ def cast_date(s):
     """
     if DATEUTIL:
         try:
-            return dp.parse(s.strip(), tzinfos=tz_data)
+            return dp.parse(s.strip(), tzinfos=tz_data).replace(tzinfo=None)
         except Exception:
             return datetime_parse(s)
     else:
