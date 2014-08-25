@@ -51,12 +51,17 @@ def datetime_parse(s):
     return s
 
 
-def cast_date(s):
+def cast_date(s, dayfirst=False, yearfirst=False):
     """Convert any date string found in WHOIS to a datetime object.
     """
     if DATEUTIL:
         try:
-            return dp.parse(s.strip(), tzinfos=tz_data).replace(tzinfo=None)
+            return dp.parse(
+                s.strip(),
+                tzinfos=tz_data,
+                dayfirst=dayfirst,
+                yearfirst=yearfirst
+            ).replace(tzinfo=None)
         except Exception:
             return datetime_parse(s)
     else:
@@ -81,6 +86,8 @@ class WhoisEntry(object):
         'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}',  # list of email s
         'dnssec':           'dnssec:\s*([\S]+)',
     }
+    dayfirst = False
+    yearfirst = False
 
     def __init__(self, domain, text, regex=None):
         self.domain = domain
@@ -98,7 +105,9 @@ class WhoisEntry(object):
             for value in re.findall(whois_regex, self.text, re.IGNORECASE):
                 if isinstance(value, basestring):
                     # try casting to date format
-                    value = cast_date(value.strip())
+                    value = cast_date(value.strip(),
+                                      dayfirst=self.dayfirst,
+                                      yearfirst=self.yearfirst)
                 if value and value not in values:
                     # avoid duplicates
                     values.append(value)
@@ -639,6 +648,8 @@ class WhoisBg(WhoisEntry):
     regex = {
         'expiration_date': 'expires at:\s*(.+)',
     }
+
+    dayfirst = True
 
     def __init__(self, domain, text):
         if text.strip() == 'No entries found':
