@@ -186,6 +186,8 @@ class WhoisEntry(object):
             return WhoisBg(domain, text)
         elif domain.endswith('.рф'):
             return WhoisRf(domain, text)
+        elif domain.endswith('.info'):
+            return WhoisInfo(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -213,6 +215,19 @@ class WhoisNet(WhoisEntry):
 class WhoisOrg(WhoisEntry):
     """Whois parser for .org domains
     """
+    regex = {
+        'domain_name':      'Domain Name:\s?(.+)',
+        'registrar':        'Registrar:\s?(.+)',
+        'whois_server':     'Whois Server:\s?(.+)', # empty usually
+        'referral_url':     'Referral URL:\s?(.+)', # http url of whois_server: empty usually
+        'updated_date':     'Updated Date:\s?(.+)',
+        'creation_date':    'Creation Date:\s?(.+)',
+        'expiration_date':  'Registry Expiry Date:\s?(.+)',
+        'name_servers':     'Name Server:\s?(.+)', # list of name servers
+        'status':           'Status:\s?(.+)', # list of statuses
+        'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}', # list of email addresses
+    }
+    
     def __init__(self, domain, text):
         if text.strip() == 'NOT FOUND':
             raise PywhoisError(text)
@@ -667,6 +682,29 @@ class WhoisRf(WhoisEntry):
 
     def __init__(self, domain, text):
         if text.strip() == 'No entries found':
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisInfo(WhoisEntry):
+    """Whois parser for .info domains
+    """
+    regex = {
+        'domain_name':      'Domain Name:\s?(.+)',
+        'registrar':        'Registrar:\s?(.+)',
+        'whois_server':     'Whois Server:\s?(.+)', # empty usually
+        'referral_url':     'Referral URL:\s?(.+)', # http url of whois_server: empty usually
+        'updated_date':     'Updated Date:\s?(.+)',
+        'creation_date':    'Creation Date:\s?(.+)',
+        'expiration_date':  'Registry Expiry Date:\s?(.+)',
+        'name_servers':     'Name Server:\s?(.+)', # list of name servers
+        'status':           'Status:\s?(.+)', # list of statuses
+        'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}', # list of email addresses
+    }
+
+    def __init__(self, domain, text):
+        if text.strip() == 'NOT FOUND':
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
