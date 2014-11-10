@@ -206,6 +206,8 @@ class NICClient(object):
             nichost = self.choose_server(query_arg)
             if (nichost is not None):
                 result = self.whois(query_arg, nichost, flags)
+            else:
+                result = ''
         else:
             result = self.whois(query_arg, options['whoishost'], flags)
         # print 'whois_lookup finished'
