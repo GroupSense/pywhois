@@ -1,4 +1,5 @@
 # coding=utf-8
+from datetime import datetime
 
 # parser.py - Module for parsing whois response data
 # Copyright (c) 2008 Andrey Petrov
@@ -12,7 +13,6 @@ try:
     from time_zones import tz_data
     DATEUTIL = True
 except ImportError:
-    from datetime import datetime
     DATEUTIL = False
 
 KNOWN_FORMATS = [
@@ -49,7 +49,6 @@ def datetime_parse(s):
         except ValueError as e:
             pass  # Wrong format, keep trying
     return s
-
 
 def cast_date(s, dayfirst=False, yearfirst=False):
     """Convert any date string found in WHOIS to a datetime object.
