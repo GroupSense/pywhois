@@ -73,52 +73,64 @@ class WhoisEntry(object):
     # regular expressions to extract domain data from whois profile
     # child classes will override this
     _regex = {
-        'domain_name':      'Domain Name:\s?(.+)',
-        'registrar':        'Registrar:\s?(.+)',
-        'whois_server':     'Whois Server:\s?(.+)',
-        'referral_url':     'Referral URL:\s?(.+)',  # http url of whois_server
-        'updated_date':     'Updated Date:\s?(.+)',
-        'creation_date':    'Creation Date:\s?(.+)',
-        'expiration_date':  'Expir\w+ Date:\s?(.+)',
-        'name_servers':     'Name Server:\s?(.+)',  # list of name servers
-        'status':           'Status:\s?(.+)',  # list of statuses
-        'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}',  # list of email s
-        'dnssec':           'dnssec:\s*([\S]+)',
+        'domain_name':          'Domain Name:\s?(.+)',
+        'registrar':            'Registrar:\s?(.+)',
+        'whois_server':         'Whois Server:\s?(.+)',
+        'referral_url':         'Referral URL:\s?(.+)',  # http url of whois_server
+        'updated_date':         'Updated Date:\s?(.+)',
+        'creation_date':        'Creation Date:\s?(.+)',
+        'expiration_date':      'Expir\w+ Date:\s?(.+)',
+        'name_servers':         'Name Server:\s?(.+)',  # list of name servers
+        'status':               'Status:\s?(.+)',  # list of statuses
+        'emails':               '[\w.-]+@[\w.-]+\.[\w]{2,4}',  # list of email s
+        'dnssec':               'dnssec:\s*([\S]+)',
+        'name':                 'Registrant Name:\s*(.+)',
+        'org':                  'Registrant\s*Organization:\s*(.+)',
+        'address':              'Registrant Street:\s*(.+)',
+        'city':                 'Registrant City:\s*(.+)',
+        'state':                'Registrant State/Province:\s*(.+)',
+        'zipcode':              'Registrant Postal Code:\s*(.+)',
+        'country':              'Registrant Country:\s*(.+)',
     }
     dayfirst = False
     yearfirst = False
 
     def __init__(self, domain, text, regex=None):
-        self.domain = domain
-        self.text = text
-        if regex is not None:
-            self._regex = regex
+        if 'This TLD has no whois server, but you can access the whois database at' in text:
+            raise PywhoisError(text)
+        else:
+            self.domain = domain
+            self.text = text
+            if regex is not None:
+                self._regex = regex
 
     def __getattr__(self, attr):
         """The first time an attribute is called it will be calculated here.
         The attribute is then set to be accessed directly by subsequent calls.
         """
-        whois_regex = self._regex.get(attr)
-        if whois_regex:
-            values = []
-            for value in re.findall(whois_regex, self.text, re.IGNORECASE):
-                if isinstance(value, basestring):
-                    # try casting to date format
-                    value = cast_date(value.strip(),
-                                      dayfirst=self.dayfirst,
-                                      yearfirst=self.yearfirst)
-                if value and value not in values:
-                    # avoid duplicates
-                    values.append(value)
-            if len(values) == 1:
-                values = values[0]
-            elif not values:
-                values = None
-
-            setattr(self, attr, values)
-            return getattr(self, attr)
-        else:
+        try:
+            whois_regex = self._regex[attr]
+        except KeyError:
             raise AttributeError('Unknown attribute: %s' % attr)
+        else:
+            if whois_regex:
+                values = []
+                for value in re.findall(whois_regex, self.text, re.IGNORECASE):
+                    if isinstance(value, basestring):
+                        # try casting to date format
+                        value = cast_date(value.strip(),
+                                          dayfirst=self.dayfirst,
+                                          yearfirst=self.yearfirst)
+                    if value and value not in values:
+                        # avoid duplicates
+                        values.append(value)
+                if len(values) == 1:
+                    values = values[0]
+                elif not values:
+                    values = None
+
+                setattr(self, attr, values)
+                return getattr(self, attr)
 
     def __str__(self):
         """Print all whois properties of domain
@@ -167,6 +179,8 @@ class WhoisEntry(object):
             return WhoisUk(domain, text)
         elif domain.endswith('.fr'):
             return WhoisFr(domain, text)
+        elif domain.endswith('.nl'):
+            return WhoisNl(domain, text)
         elif domain.endswith('.fi'):
             return WhoisFi(domain, text)
         elif domain.endswith('.jp'):
@@ -183,6 +197,12 @@ class WhoisEntry(object):
             return WhoisPt(domain, text)
         elif domain.endswith('.bg'):
             return WhoisBg(domain, text)
+        elif domain.endswith('.de'):
+            return WhoisDe(domain, text)
+        elif domain.endswith('.ca'):
+            return WhoisCa(domain, text)
+        elif domain.endswith('.be'):
+            return WhoisBe(domain, text)
         elif domain.endswith('.рф'):
             return WhoisRf(domain, text)
         elif domain.endswith('.info'):
@@ -245,6 +265,7 @@ class WhoisRu(WhoisEntry):
         'name_servers': 'nserver:\s*(.+)',  # list of name servers
         'status': 'state:\s*(.+)',  # list of statuses
         'emails': '[\w.-]+@[\w.-]+\.[\w]{2,4}',  # list of email addresses
+        'org': 'org:\s*(.+)'
     }
 
     def __init__(self, domain, text):
@@ -253,6 +274,33 @@ class WhoisRu(WhoisEntry):
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
 
+
+class WhoisNl(WhoisEntry):
+    """Whois parser for .nl domains
+    """
+    regex = {
+        'name': None,
+        'address': None,
+        'zip_code': None,
+        'city': None,
+        'country': None
+    }
+
+    def __init__(self, domain, text):
+        if text.endswith('is free'):
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+        match = re.compile('Registrar:(.*?)DNSSEC', re.DOTALL).search(text)
+        if match:
+            lines = match.groups()[0].strip().splitlines()
+            self.name = lines[0]
+            self.address = lines[1]
+            if len(lines) == 4:
+                self.zip_code, _, self.city = lines[2].partition(' ')
+            self.country = lines[-1]
+                
 
 class WhoisName(WhoisEntry):
     """Whois parser for .name domains
@@ -275,7 +323,7 @@ class WhoisName(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if 'No match.' in text:
+        if 'No match for ' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
@@ -373,7 +421,22 @@ class WhoisPl(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if 'Not found:' in text:
+        if 'No information available about domain name' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisCa(WhoisEntry):
+    """Whois parser for .ca domains
+    """
+    regex = {
+        'registrant_name':                'Name:\s*(.+)',
+        'registrant_number':              'Number:\s*(.+)\n',
+    }
+
+    def __init__(self, domain, text):
+        if 'Domain status:         available' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
@@ -469,7 +532,7 @@ class WhoisUk(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if 'Not found:' in text:
+        if 'No match for ' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
@@ -490,7 +553,7 @@ class WhoisFr(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if text.strip() == 'No entries found':
+        if 'No entries found' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
@@ -501,9 +564,9 @@ class WhoisFi(WhoisEntry):
     """
     regex = {
         'domain_name':                    'domain:\s*([\S]+)',
-        'registrant_name':                'descr:\s*([\S\ ]+)',
-        'registrant_address':             'address:\s*([\S\ ]+)',
-        'registrant_phone':               'phone:\s*([\S\ ]+)',
+        'name':                           'descr:\s*([\S\ ]+)',
+        'address':                        'address:\s*([\S\ ]+)',
+        'phone':                          'phone:\s*([\S\ ]+)',
         'status':                         'status:\s*([\S]+)',  # list of statuses
         'creation_date':                  'created:\s*([\S]+)',
         'updated_date':                   'modified:\s*([\S]+)',
@@ -533,7 +596,7 @@ class WhoisJp(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if text.strip() == 'No entries found':
+        if 'No match!!' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
@@ -631,7 +694,7 @@ class WhoisKr(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if text.strip() == 'No entries found':
+        if text.endswith(' no match'):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
@@ -666,14 +729,14 @@ class WhoisBg(WhoisEntry):
     dayfirst = True
 
     def __init__(self, domain, text):
-        if text.strip() == 'No entries found':
+        if 'does not exist in database!' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
 
 
 class WhoisRf(WhoisEntry):
-    """Whois parser for .bg domains"""
+    """Whois parser for .rf domains"""
 
     regex = {
         'expiration_date': 'free-date:\s*(.+)',
@@ -684,6 +747,46 @@ class WhoisRf(WhoisEntry):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisDe(WhoisEntry):
+    """Whois parser for .de domains"""
+
+    regex = {
+        'name': 'name:\s*(.+)',
+        'org': 'Organisation:\s*(.+)',
+        'address': 'Address:\s*(.+)',
+        'zipcode': 'PostalCode:\s*(.+)',
+        'city': 'City:\s*(.+)',
+        'country_code': 'CountryCode:\s*(.+)',
+        'phone': 'Phone:\s*(.+)',
+        'fax': 'Fax:\s*(.+)'
+    }
+
+    def __init__(self, domain, text):
+        if 'Status: free' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisBe(WhoisEntry):
+    """Whois parser for .be domains"""
+
+    regex = {
+        'name': 'Name:\s*(.+)',
+        'org': 'Organisation:\s*(.+)',
+        'phone': 'Phone:\s*(.+)',
+        'fax': 'Fax:\s*(.+)',
+        'email': 'Email:\s*(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'Status: AVAILABLE' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
 
 
 class WhoisInfo(WhoisEntry):
@@ -700,6 +803,13 @@ class WhoisInfo(WhoisEntry):
         'name_servers':     'Name Server:\s?(.+)', # list of name servers
         'status':           'Status:\s?(.+)', # list of statuses
         'emails':           '[\w.-]+@[\w.-]+\.[\w]{2,4}', # list of email addresses
+        'name':             'Registrant Name:\s*(.+)',
+        'org':              'Registrant Organization:\s*(.+)',
+        'address':          'Registrant Street:\s*(.+)',
+        'city':             'Registrant City:\s*(.+)',
+        'state':            'Registrant State/Province:\s*(.+)',
+        'zipcode':          'Registrant Postal Code:\s*(.+)',
+        'country':          'Registrant Country:\s*(.+)',
     }
 
     def __init__(self, domain, text):
