@@ -67,7 +67,7 @@ def cast_date(s, dayfirst=False, yearfirst=False):
         return datetime_parse(s)
 
 
-class WhoisEntry(object):
+class WhoisEntry(dict):
     """Base class for parsing a Whois entries.
     """
     # regular expressions to extract domain data from whois profile
@@ -103,19 +103,16 @@ class WhoisEntry(object):
             self.text = text
             if regex is not None:
                 self._regex = regex
+            self.parse()
 
-    def __getattr__(self, attr):
+    def parse(self):
         """The first time an attribute is called it will be calculated here.
         The attribute is then set to be accessed directly by subsequent calls.
         """
-        try:
-            whois_regex = self._regex[attr]
-        except KeyError:
-            raise AttributeError('Unknown attribute: %s' % attr)
-        else:
-            if whois_regex:
+        for attr, regex in self._regex.items():
+            if regex:
                 values = []
-                for value in re.findall(whois_regex, self.text, re.IGNORECASE):
+                for value in re.findall(regex, self.text, re.IGNORECASE):
                     if isinstance(value, basestring):
                         # try casting to date format
                         value = cast_date(value.strip(),
@@ -129,27 +126,13 @@ class WhoisEntry(object):
                 elif not values:
                     values = None
 
-                setattr(self, attr, values)
-                return getattr(self, attr)
+                self[attr] = values
 
-    def __str__(self):
-        """Print all whois properties of domain
-        """
-        return '\n'.join('%s: %s' % (attr, str(getattr(self, attr)))
-                         for attr in self.attrs())
 
-    def __getstate__(self):
-        """To support pickling
-        """
-        return self.__dict__
+    def __setitem__(self, name, value):
+        super(WhoisEntry, self).__setitem__(name, value)
+        setattr(self, name, value)
 
-    def __setstate__(self, state):
-        self.__dict__ = state
-
-    def attrs(self):
-        """Return list of attributes that can be extracted for this domain
-        """
-        return sorted(self._regex.keys())
 
     @staticmethod
     def load(domain, text):
