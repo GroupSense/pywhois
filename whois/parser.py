@@ -615,7 +615,7 @@ class WhoisEu(WhoisEntry):
         'tech_fax': r'Technical:\s*Name:\s*[^\n\r]+\s*Organisation:\s*[^\n\r]+\s*Language:\s*[^\n\r]+\s*Phone:\s*[^\n\r]+\s*Fax:\s*([^\n\r]+)',
         'tech_email': r'Technical:\s*Name:\s*[^\n\r]+\s*Organisation:\s*[^\n\r]+\s*Language:\s*[^\n\r]+\s*Phone:\s*[^\n\r]+\s*Fax:\s*[^\n\r]+\s*Email:\s*([^\n\r]+)',
         'registrar': r'Registrar:\s*Name:\s*([^\n\r]+)',
-        'name_servers': r'Name servers:\s*([^\n\r]+)\s*([^\n\r]*)\s*([^\n\r]*)\s*([^\n\r]*)\s*([^\n\r]*)\s*([^\n\r]*)\s*([^\n\r]*)\s*([^\n\r]*)\s*([^\n\r]*)\s*Keys',  # list of name servers
+        'name_servers': r'Name servers:\s*([^\n\r]+)\s*([^\n\r]*)',  # list of name servers
     }
 
     def __init__(self, domain, text):
