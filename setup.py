@@ -1,9 +1,9 @@
-from setuptools import setup, find_packages
 import sys, os
+import setuptools
 
-version = '0.2'
+version = '0.3.1'
 
-setup(
+setuptools.setup(
     name='python-whois',
     version=version,
     description="Whois querying and parsing of domain registration information.",
@@ -19,16 +19,13 @@ setup(
     keywords='whois, python',
     author='Richard Penman',
     author_email='richard@webscraping.com',
-    url='http://code.google.com/p/pywhois/',
+    url='https://bitbucket.org/richardpenman/pywhois',
     license='MIT',
     packages=['whois'],
     package_dir={'whois':'whois'},
-    package_data={
-        'whois': ['data/*.txt']
-    },
     extras_require={
         'better date conversion': ["python-dateutil"]
     },
     include_package_data=True,
-    zip_safe=False,
+    zip_safe=False
 )
