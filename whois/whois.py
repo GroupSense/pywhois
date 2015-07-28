@@ -122,31 +122,35 @@ class NICClient(object):
         # print 'Performing the whois'
         # print 'parameters given:', query, hostname, flags
         # pdb.set_trace()
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((hostname, 43))
-        """send takes bytes as an input
-        """
-        queryBytes = None
-        if type(query) is not unicode:
-            query = query.decode('utf-8')
+        try:
+          s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+          s.settimeout(2)
+          s.connect((hostname, 43))
+          """send takes bytes as an input
+          """
+          queryBytes = None
+          if type(query) is not unicode:
+              query = query.decode('utf-8')
 
-        if (hostname == NICClient.DENICHOST):
-            # print 'the domain is in NIC DENIC'
-            queryBytes = ("-T dn,ace -C UTF-8 " + query + "\r\n").encode('idna')
-            # print 'queryBytes:', queryBytes
-        else:
-            queryBytes = (query + "\r\n").encode('idna')
-        s.send(queryBytes)
-        """recv returns bytes
-        """
-        # print s
-        response = b''
-        while True:
-            d = s.recv(4096)
-            response += d
-            if not d:
-                break
-        s.close()
+          if (hostname == NICClient.DENICHOST):
+              # print 'the domain is in NIC DENIC'
+              queryBytes = ("-T dn,ace -C UTF-8 " + query + "\r\n").encode('idna')
+              # print 'queryBytes:', queryBytes
+          else:
+              queryBytes = (query + "\r\n").encode('idna')
+          s.send(queryBytes)
+          """recv returns bytes
+          """
+          # print s
+          response = b''
+          while True:
+              d = s.recv(4096)
+              response += d
+              if not d:
+                  break
+          s.close()
+        except socket.error as socketerror:
+          print("Error: ", socketerror)
         # pdb.set_trace()
         nhost = None
         # print 'response', response
