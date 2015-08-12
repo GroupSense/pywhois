@@ -190,6 +190,16 @@ class WhoisEntry(dict):
             return WhoisRf(domain, text)
         elif domain.endswith('.info'):
             return WhoisInfo(domain, text)
+        elif domain.endswith('.su'):
+            return WhoisSu(domain, text)
+        elif domain.endswith('.kg'):
+            return WhoisKg(domain, text)
+        elif domain.endswith('.io'):
+            return WhoisIo(domain, text)
+        elif domain.endswith('.biz'):
+            return WhoisBiz(domain, text)
+        elif domain.endswith('.mobi'):
+            return WhoisMobi(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -718,18 +728,12 @@ class WhoisBg(WhoisEntry):
             WhoisEntry.__init__(self, domain, text, self.regex)
 
 
-class WhoisRf(WhoisEntry):
-    """Whois parser for .rf domains"""
+class WhoisRf(WhoisRu):
 
-    regex = {
-        'expiration_date': 'free-date:\s*(.+)',
-    }
-
-    def __init__(self, domain, text):
-        if text.strip() == 'No entries found':
-            raise PywhoisError(text)
-        else:
-            WhoisEntry.__init__(self, domain, text, self.regex)
+    """Whois parser for .rf domains
+    """
+    def __init__(self):
+        super(WhoisRf, self).__init__()
 
 
 class WhoisDe(WhoisEntry):
@@ -800,3 +804,151 @@ class WhoisInfo(WhoisEntry):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+
+class WhoisSu(WhoisRu):
+
+    """Whois parser for .su domains
+    """
+    def __init__(self):
+        super(WhoisSu, self).__init__()
+
+
+class WhoisClub(WhoisEntry):
+
+    """Whois parser for .us domains
+    """
+    regex = {
+        'domain_name':                    'Domain Name:\s*(.+)',
+        'domain__id':                     'Domain ID:\s*(.+)',
+        'registrar':                      'Sponsoring Registrar:\s*(.+)',
+        'registrar_id':                   'Sponsoring Registrar IANA ID:\s*(.+)',
+        'registrar_url':                  'Registrar URL \(registration services\):\s*(.+)',
+        # list of statuses
+        'status':                         'Domain Status:\s*(.+)',
+        'registrant_id':                  'Registrant ID:\s*(.+)',
+        'registrant_name':                'Registrant Name:\s*(.+)',
+        'registrant_address1':            'Registrant Address1:\s*(.+)',
+        'registrant_address2':            'Registrant Address2:\s*(.+)',
+        'registrant_city':                'Registrant City:\s*(.+)',
+        'registrant_state_province':      'Registrant State/Province:\s*(.+)',
+        'registrant_postal_code':         'Registrant Postal Code:\s*(.+)',
+        'registrant_country':             'Registrant Country:\s*(.+)',
+        'registrant_country_code':        'Registrant Country Code:\s*(.+)',
+        'registrant_phone_number':        'Registrant Phone Number:\s*(.+)',
+        'registrant_email':               'Registrant Email:\s*(.+)',
+        'registrant_application_purpose': 'Registrant Application Purpose:\s*(.+)',
+        'registrant_nexus_category':      'Registrant Nexus Category:\s*(.+)',
+        'admin_id':                       'Administrative Contact ID:\s*(.+)',
+        'admin_name':                     'Administrative Contact Name:\s*(.+)',
+        'admin_address1':                 'Administrative Contact Address1:\s*(.+)',
+        'admin_address2':                 'Administrative Contact Address2:\s*(.+)',
+        'admin_city':                     'Administrative Contact City:\s*(.+)',
+        'admin_state_province':           'Administrative Contact State/Province:\s*(.+)',
+        'admin_postal_code':              'Administrative Contact Postal Code:\s*(.+)',
+        'admin_country':                  'Administrative Contact Country:\s*(.+)',
+        'admin_country_code':             'Administrative Contact Country Code:\s*(.+)',
+        'admin_phone_number':             'Administrative Contact Phone Number:\s*(.+)',
+        'admin_email':                    'Administrative Contact Email:\s*(.+)',
+        'admin_application_purpose':      'Administrative Application Purpose:\s*(.+)',
+        'admin_nexus_category':           'Administrative Nexus Category:\s*(.+)',
+        'billing_id':                     'Billing Contact ID:\s*(.+)',
+        'billing_name':                   'Billing Contact Name:\s*(.+)',
+        'billing_address1':               'Billing Contact Address1:\s*(.+)',
+        'billing_address2':               'Billing Contact Address2:\s*(.+)',
+        'billing_city':                   'Billing Contact City:\s*(.+)',
+        'billing_state_province':         'Billing Contact State/Province:\s*(.+)',
+        'billing_postal_code':            'Billing Contact Postal Code:\s*(.+)',
+        'billing_country':                'Billing Contact Country:\s*(.+)',
+        'billing_country_code':           'Billing Contact Country Code:\s*(.+)',
+        'billing_phone_number':           'Billing Contact Phone Number:\s*(.+)',
+        'billing_email':                  'Billing Contact Email:\s*(.+)',
+        'billing_application_purpose':    'Billing Application Purpose:\s*(.+)',
+        'billing_nexus_category':         'Billing Nexus Category:\s*(.+)',
+        'tech_id':                        'Technical Contact ID:\s*(.+)',
+        'tech_name':                      'Technical Contact Name:\s*(.+)',
+        'tech_address1':                  'Technical Contact Address1:\s*(.+)',
+        'tech_address2':                  'Technical Contact Address2:\s*(.+)',
+        'tech_city':                      'Technical Contact City:\s*(.+)',
+        'tech_state_province':            'Technical Contact State/Province:\s*(.+)',
+        'tech_postal_code':               'Technical Contact Postal Code:\s*(.+)',
+        'tech_country':                   'Technical Contact Country:\s*(.+)',
+        'tech_country_code':              'Technical Contact Country Code:\s*(.+)',
+        'tech_phone_number':              'Technical Contact Phone Number:\s*(.+)',
+        'tech_email':                     'Technical Contact Email:\s*(.+)',
+        'tech_application_purpose':       'Technical Application Purpose:\s*(.+)',
+        'tech_nexus_category':            'Technical Nexus Category:\s*(.+)',
+        # list of name servers
+        'name_servers':                   'Name Server:\s*(.+)',
+        'created_by_registrar':           'Created by Registrar:\s*(.+)',
+        'last_updated_by_registrar':      'Last Updated by Registrar:\s*(.+)',
+        'creation_date':                  'Domain Registration Date:\s*(.+)',
+        'expiration_date':                'Domain Expiration Date:\s*(.+)',
+        'updated_date':                   'Domain Last Updated Date:\s*(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'Not found:' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisIo(WhoisEntry):
+
+    """Whois parser for .io domains"""
+    regex = {
+        'status':           'Status\s*:\s*(.+)',
+        'name_servers':     'NS \d?\s*:\s*(.+)',
+        'owner':            'Owner\s*:\s*(.+)',
+        'expiration_date':  'Expiry\s*:\s*(.+)',
+        'domain_name':      'Domain\s*:\s*(.+)',
+        'registrar':        r'Check for \'[\w\.]*\' --- (.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'is available for purchase' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisBiz(WhoisEntry):
+
+    """Whois parser for .biz domains"""
+
+    def __init__(self, domain, text):
+        super(WhoisUs, self).__init__(domain, text)
+
+
+class WhoisMobi(WhoisMe):
+
+    def __init__(self, domain, text):
+        super(WhoisMobi, self).__init__(domain, text)
+
+
+class WhoisKg(WhoisEntry):
+    regex = {
+        'domain_name':                    'Domain\s*([\w]+\.[\w]{2,5})',
+        'registrar':                      'Domain support: \s*(.+)',
+        'registrant_name':                'Name:\s*(.+)',
+        'registrant_address1':            'Address:\s*(.+)',
+        'registrant_phone_number':        'phone:\s*(.+)',
+        'registrant_email':               'Email:\s*(.+)',
+        # # list of name servers
+        'name_servers':                   'Name servers in the listed order:\s*([\d\w\.\s]+)',
+        # 'name_servers':      r'([\w]+\.[\w]+\.[\w]{2,5}\s*\d{1,3}\.\d]{1,3}\.[\d]{1-3}\.[\d]{1-3})',
+        'creation_date':                  'Record created:\s*(.+)',
+        'expiration_date':                'Record expires on \s*(.+)',
+        'updated_date':                   'Record last updated on\s*(.+)',
+
+    }
+    def __init__(self, domain, text):
+        if 'Data not found. This domain is available for registration' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+
