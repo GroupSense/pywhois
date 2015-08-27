@@ -713,8 +713,8 @@ class WhoisPt(WhoisEntry):
 
 
 class WhoisBg(WhoisEntry):
-    """Whois parser for .bg domains"""
-
+    """Whois parser for .bg domains
+    """
     regex = {
         'expiration_date': 'expires at:\s*(.+)',
     }
@@ -728,17 +728,9 @@ class WhoisBg(WhoisEntry):
             WhoisEntry.__init__(self, domain, text, self.regex)
 
 
-class WhoisRf(WhoisRu):
-
-    """Whois parser for .rf domains
-    """
-    def __init__(self):
-        super(WhoisRf, self).__init__()
-
-
 class WhoisDe(WhoisEntry):
-    """Whois parser for .de domains"""
-
+    """Whois parser for .de domains
+    """
     regex = {
         'name': 'name:\s*(.+)',
         'org': 'Organisation:\s*(.+)',
@@ -758,8 +750,8 @@ class WhoisDe(WhoisEntry):
 
 
 class WhoisBe(WhoisEntry):
-    """Whois parser for .be domains"""
-
+    """Whois parser for .be domains
+    """
     regex = {
         'name': 'Name:\s*(.+)',
         'org': 'Organisation:\s*(.+)',
@@ -808,15 +800,13 @@ class WhoisInfo(WhoisEntry):
 
 
 class WhoisSu(WhoisRu):
-
     """Whois parser for .su domains
     """
-    def __init__(self):
-        super(WhoisSu, self).__init__()
+    def __init__(self, domain, text):
+        WhoisRu.__init__(self, domain, text)
 
 
 class WhoisClub(WhoisEntry):
-
     """Whois parser for .us domains
     """
     regex = {
@@ -896,8 +886,8 @@ class WhoisClub(WhoisEntry):
 
 
 class WhoisIo(WhoisEntry):
-
-    """Whois parser for .io domains"""
+    """Whois parser for .io domains
+    """
     regex = {
         'status':           'Status\s*:\s*(.+)',
         'name_servers':     'NS \d?\s*:\s*(.+)',
@@ -914,21 +904,23 @@ class WhoisIo(WhoisEntry):
             WhoisEntry.__init__(self, domain, text, self.regex)
 
 
-class WhoisBiz(WhoisEntry):
-
-    """Whois parser for .biz domains"""
-
+class WhoisBiz(WhoisUs):
+    """Whois parser for .biz domains
+    """
     def __init__(self, domain, text):
-        super(WhoisUs, self).__init__(domain, text)
+        WhoisUs.__init__(self, domain, text)
 
 
 class WhoisMobi(WhoisMe):
-
+    """Whois parser for .mobi domains
+    """
     def __init__(self, domain, text):
-        super(WhoisMobi, self).__init__(domain, text)
+        WhoisMe.__init__(self, domain, text)
 
 
 class WhoisKg(WhoisEntry):
+    """Whois parser for .kg domains
+    """
     regex = {
         'domain_name':                    'Domain\s*([\w]+\.[\w]{2,5})',
         'registrar':                      'Domain support: \s*(.+)',
@@ -949,6 +941,3 @@ class WhoisKg(WhoisEntry):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
-
-
-
