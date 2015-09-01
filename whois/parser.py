@@ -1,12 +1,13 @@
 # coding=utf-8
-from datetime import datetime
-
 # parser.py - Module for parsing whois response data
 # Copyright (c) 2008 Andrey Petrov
 #
 # This module is part of pywhois and is released under
 # the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+
+import json
+from datetime import datetime
 import re
 try:
     import dateutil.parser as dp
@@ -136,6 +137,11 @@ class WhoisEntry(dict):
     def __getattr__(self, name):
         return self.get(name)
         
+
+    def __str__(self):
+        handler = lambda e: str(e)
+        return json.dumps(self, indent=2, default=handler)
+
 
     @staticmethod
     def load(domain, text):
