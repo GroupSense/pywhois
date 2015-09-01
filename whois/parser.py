@@ -130,7 +130,7 @@ class WhoisEntry(dict):
 
 
     def __setitem__(self, name, value):
-        super(WhoisEntry, self).__setitem__(name, value)
+        WhoisEntry.__init__(self, domain, text)
         setattr(self, name, value)
 
 
@@ -797,6 +797,12 @@ class WhoisInfo(WhoisEntry):
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
 
+
+class WhoisRf(WhoisRu):
+    """Whois parser for .su domains
+    """
+    def __init__(self, domain, text):
+        WhoisRu.__init__(self, domain, text)
 
 
 class WhoisSu(WhoisRu):
