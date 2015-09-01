@@ -130,9 +130,12 @@ class WhoisEntry(dict):
 
 
     def __setitem__(self, name, value):
-        WhoisEntry.__init__(self, domain, text)
-        setattr(self, name, value)
+        super(WhoisEntry, self).__setitem__(name, value)
 
+
+    def __getattr__(self, name):
+        return self.get(name)
+        
 
     @staticmethod
     def load(domain, text):
