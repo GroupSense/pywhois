@@ -7,23 +7,19 @@ from parser import WhoisEntry
 from whois import NICClient
 
 
-def whois(url, experimental=False):
+def whois(url, command=False):
     # clean domain to expose netloc
     ip_match = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", url)
     if ip_match:
         domain = url
     else:
         domain = extract_domain(url)
-    if not experimental:
-        try:
-            # try native whois command first
-            r = subprocess.Popen(['whois', domain], stdout=subprocess.PIPE)
-            text = r.stdout.read()
-        except OSError:
-            # try experimental client
-            nic_client = NICClient()
-            text = nic_client.whois_lookup(None, domain, 0)
+    if command:
+        # try native whois command
+        r = subprocess.Popen(['whois', domain], stdout=subprocess.PIPE)
+        text = r.stdout.read()
     else:
+        # try builtin client
         nic_client = NICClient()
         text = nic_client.whois_lookup(None, domain, 0)
     return WhoisEntry.load(domain, text)
@@ -34,10 +30,8 @@ def extract_domain(url):
 
     >>> extract_domain('http://www.google.com.au/tos.html')
     'google.com.au'
-    >>> extract_domain('http://blog.webscraping.com')
+    >>> extract_domain('www.webscraping.com')
     'webscraping.com'
-    >>> extract_domain('www.bbc.co.uk')
-    'bbc.co.uk'
     >>> extract_domain('198.252.206.140')
     'stackoverflow.com'
     >>> extract_domain('102.112.2O7.net')
@@ -73,6 +67,6 @@ if __name__ == '__main__':
     try:
         url = sys.argv[1]
     except IndexError:
-        print('Usage: %s url' % sys.argv[0])
+        print 'Usage: %s url' % sys.argv[0]
     else:
-        print(whois(url))
+        print whois(url)

@@ -24,21 +24,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-  Last edited by:  $Author$
-              on:  $DateTime$
-        Revision:  $Revision$
-              Id:  $Id$
-          Author:  Chris Wolf
 """
 import sys
 import socket
 import optparse
-# import pdb
 
 
 def enforce_ascii(a):
     if isinstance(a, str) or isinstance(a, unicode):
-        # return a.encode('ascii', 'replace')
         r = ""
         for i in a:
             if ord(i) >= 128:
@@ -84,28 +77,22 @@ class NICClient(object):
         """Search the initial TLD lookup results for the regional-specifc
         whois server for getting contact details.
         """
-        # print 'finding whois server'
-        # print 'parameters:', buf, 'hostname', hostname
         nhost = None
         parts_index = 1
         start = buf.find(NICClient.WHOIS_SERVER_ID)
-        # print 'start', start
         if (start == -1):
             start = buf.find(NICClient.WHOIS_ORG_SERVER_ID)
             parts_index = 2
 
         if (start > -1):
             end = buf[start:].find('\n')
-            # print 'end:', end
             whois_line = buf[start:end+start]
-            # print 'whois_line', whois_line
             nhost = whois_line.split(NICClient.WHOIS_SERVER_ID+' ').pop()
             nhost = nhost.split('http://').pop()
             # if the whois address is domain.tld/something then
             # s.connect((hostname, 43)) does not work
             if nhost.count('/') > 0:
                 nhost = None
-            # print 'nhost:',nhost
         elif (hostname == NICClient.ANICHOST):
             for nichost in NICClient.ip_whois:
                 if (buf.find(nichost) != -1):
@@ -119,9 +106,6 @@ class NICClient(object):
         for the region-specifc whois server and do a lookup
         there for contact details
         """
-        # print 'Performing the whois'
-        # print 'parameters given:', query, hostname, flags
-        # pdb.set_trace()
         try:
           s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
           s.settimeout(2)
@@ -132,16 +116,15 @@ class NICClient(object):
           if type(query) is not unicode:
               query = query.decode('utf-8')
 
-          if (hostname == NICClient.DENICHOST):
-              # print 'the domain is in NIC DENIC'
+          if hostname == NICClient.DENICHOST:
               queryBytes = ("-T dn,ace -C UTF-8 " + query + "\r\n").encode('idna')
-              # print 'queryBytes:', queryBytes
+          elif hostname == 'com.whois-servers.net':
+              queryBytes = ('=' + query + "\r\n").encode('idna')
           else:
               queryBytes = (query + "\r\n").encode('idna')
           s.send(queryBytes)
           """recv returns bytes
           """
-          # print s
           response = b''
           while True:
               d = s.recv(4096)
@@ -150,20 +133,13 @@ class NICClient(object):
                   break
           s.close()
         except socket.error as socketerror:
-          print("Error: ", socketerror)
-        # pdb.set_trace()
+          print "Error: ", socketerror
         nhost = None
-        # print 'response', response
         response = enforce_ascii(response)
         if (flags & NICClient.WHOIS_RECURSE and nhost is None):
-            # print 'Inside first if'
             nhost = self.findwhois_server(response.decode(), hostname)
-            # print 'nhost is:', nhost
         if (nhost is not None):
-            # print 'inside second if'
             response += self.whois(query, nhost, 0)
-            # print 'response', response
-        # print 'returning whois response'
         return response.decode()
 
     def choose_server(self, domain):
@@ -186,11 +162,9 @@ class NICClient(object):
         or other server to get region-specific whois server, then if quick
         flag is false, perform a second lookup on the region-specific
         server for contact records"""
-        # print 'whois_lookup'
         nichost = None
-        # pdb.set_trace()
         # whoud happen when this function is called by other than main
-        if (options is None):
+        if options is None:
             options = {}
 
         if (('whoishost' not in options or options['whoishost'] is None)
@@ -200,13 +174,13 @@ class NICClient(object):
             if (not (flags & NICClient.WHOIS_QUICK)):
                 flags |= NICClient.WHOIS_RECURSE
 
-        if ('country' in options and options['country'] is not None):
+        if 'country' in options and options['country'] is not None:
             result = self.whois(
                 query_arg,
                 options['country'] + NICClient.QNICHOST_TAIL,
                 flags
             )
-        elif (self.use_qnichost):
+        elif self.use_qnichost:
             nichost = self.choose_server(query_arg)
             if (nichost is not None):
                 result = self.whois(query_arg, nichost, flags)
@@ -214,7 +188,6 @@ class NICClient(object):
                 result = ''
         else:
             result = self.whois(query_arg, options['whoishost'], flags)
-        # print 'whois_lookup finished'
         return result
 
 
@@ -285,4 +258,4 @@ if __name__ == "__main__":
     (options, args) = parse_command_line(sys.argv)
     if (options.b_quicklookup is True):
         flags = flags | NICClient.WHOIS_QUICK
-    print(nic_client.whois_lookup(options.__dict__, args[1], flags))
+    print nic_client.whois_lookup(options.__dict__, args[1], flags)
