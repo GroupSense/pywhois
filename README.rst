@@ -8,6 +8,8 @@ Goal
    intermediate web service like many others do.
 -  Works with Python 2.4+ and no external dependencies
 
+
+
 Example
 =======
 
@@ -28,6 +30,8 @@ Example
     expiration_date: 2013-06-26 00:00:00
     ...
 
+
+
 Install
 =======
 
@@ -42,6 +46,32 @@ Or checkout latest version from repository:
 .. sourcecode:: python
 
     hg clone https://bitbucket.org/richardpenman/pywhois
+
+
+
+Changelog
+=========
+
+0.5 - 2015-09-05:
+
+* added native client, which now handles whois requests by default
+* added pretty formatting to string representation
+* return None instead of raising KeyError when an attribute does not exist
+* new TLD's: .mobi, .io, .kg, .su, .biz
+
+0.4 - 2015-08-13:
+
+* new TLD's: .de, .nl, .ca, .be
+* migrated to bitbucket
+* added socket timeout
+
+0.3 - 2015-03-31:
+
+* improved datetime parsing with python-dateutil when available
+* base WhoisEntry class inherits from dict
+* fixed TLD's: .org, .info
+
+
 
 Contact
 =======
