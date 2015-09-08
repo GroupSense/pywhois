@@ -1,7 +1,7 @@
 import sys, os
 import setuptools
 
-version = '0.4'
+version = '0.5'
 
 setuptools.setup(
     name='python-whois',
