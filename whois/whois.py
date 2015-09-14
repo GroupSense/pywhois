@@ -122,15 +122,17 @@ class NICClient(object):
             s.close()
         except socket.error as socketerror:
             print 'Socket Error:', socketerror
-        nhost = None
-        response = enforce_ascii(response)
-        if 'with "=xxx"' in response:
-            return self.whois(query, hostname, flags, True)
-        if flags & NICClient.WHOIS_RECURSE and nhost is None:
-            nhost = self.findwhois_server(response.decode(), hostname, query)
-        if nhost is not None:
-            response += self.whois(query, nhost, 0)
-        return response.decode()
+            return ''
+        else:
+            nhost = None
+            response = enforce_ascii(response)
+            if 'with "=xxx"' in response:
+                return self.whois(query, hostname, flags, True)
+            if flags & NICClient.WHOIS_RECURSE and nhost is None:
+                nhost = self.findwhois_server(response.decode(), hostname, query)
+            if nhost is not None:
+                response += self.whois(query, nhost, 0)
+            return response.decode()
 
     def choose_server(self, domain):
         """Choose initial lookup NIC host"""
