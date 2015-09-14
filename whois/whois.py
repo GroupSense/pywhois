@@ -90,7 +90,7 @@ class NICClient(object):
                     break
         return nhost
 
-    def whois(self, query, hostname, flags):
+    def whois(self, query, hostname, flags, many_results=False):
         """Perform initial lookup with TLD whois server
         then, if the quick flag is false, search that result
         for the region-specifc whois server and do a lookup
@@ -107,7 +107,7 @@ class NICClient(object):
 
             if hostname == NICClient.DENICHOST:
                 queryBytes = "-T dn,ace -C UTF-8 " + query
-            elif hostname.endswith(NICClient.QNICHOST_TAIL):
+            elif hostname.endswith(NICClient.QNICHOST_TAIL) and many_results:
                 queryBytes = '=' + query
             else:
                 queryBytes = query
@@ -121,9 +121,11 @@ class NICClient(object):
                     break
             s.close()
         except socket.error as socketerror:
-            print 'Error: ', socketerror
+            print 'Socket Error:', socketerror
         nhost = None
         response = enforce_ascii(response)
+        if 'with "=xxx"' in response:
+            return self.whois(query, hostname, flags, True)
         if flags & NICClient.WHOIS_RECURSE and nhost is None:
             nhost = self.findwhois_server(response.decode(), hostname, query)
         if nhost is not None:

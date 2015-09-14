@@ -296,12 +296,13 @@ class WhoisNl(WhoisEntry):
 
         match = re.compile('Registrar:(.*?)DNSSEC', re.DOTALL).search(text)
         if match:
-            lines = match.groups()[0].strip().splitlines()
-            self.name = lines[0]
-            self.address = lines[1]
+            lines = [line.strip() for line in match.groups()[0].strip().splitlines()]
+            self['name'] = lines[0]
+            self['address'] = lines[1]
             if len(lines) == 4:
-                self.zip_code, _, self.city = lines[2].partition(' ')
-            self.country = lines[-1]
+                self['zip_code'], _, self['city'] = lines[2].partition(' ')
+            self['country'] = lines[-1]
+
                 
 
 class WhoisName(WhoisEntry):
