@@ -1,10 +1,17 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import *
 import re
 import sys
 import os
 import subprocess
 import socket
-from parser import WhoisEntry
-from whois import NICClient
+from .parser import WhoisEntry
+from .whois import NICClient
 
 
 def whois(url, command=False):
@@ -50,7 +57,7 @@ def extract_domain(url):
         if not line.startswith('#')
     ]
 
-    if type(url) is not unicode:
+    if type(url) is not str:
         url = url.decode('utf-8')
     url = re.sub('^.*://', '', url.encode('idna')).split('/')[0].lower()
     domain = []
@@ -67,6 +74,6 @@ if __name__ == '__main__':
     try:
         url = sys.argv[1]
     except IndexError:
-        print 'Usage: %s url' % sys.argv[0]
+        print('Usage: %s url' % sys.argv[0])
     else:
-        print whois(url)
+        print(whois(url))

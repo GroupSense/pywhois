@@ -1,3 +1,10 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import *
 import unittest
 
 import os
@@ -69,7 +76,7 @@ class TestParser(unittest.TestCase):
                 result = results.get(key)
                 expected = expected_results.get(key)
                 if expected != result:
-                    print "%s \t(%s):\t %s != %s" % (domain, key, result, expected)
+                    print("%s \t(%s):\t %s != %s" % (domain, key, result, expected))
                     fail += 1
             
         if fail:

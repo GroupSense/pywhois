@@ -1,3 +1,12 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import *
+from builtins import str
+from past.builtins import basestring
 # coding=utf-8
 # parser.py - Module for parsing whois response data
 # Copyright (c) 2008 Andrey Petrov
@@ -11,7 +20,7 @@ from datetime import datetime
 import re
 try:
     import dateutil.parser as dp
-    from time_zones import tz_data
+    from .time_zones import tz_data
     DATEUTIL = True
 except ImportError:
     DATEUTIL = False
@@ -110,7 +119,7 @@ class WhoisEntry(dict):
         """The first time an attribute is called it will be calculated here.
         The attribute is then set to be accessed directly by subsequent calls.
         """
-        for attr, regex in self._regex.items():
+        for attr, regex in list(self._regex.items()):
             if regex:
                 values = []
                 for value in re.findall(regex, self.text, re.IGNORECASE):

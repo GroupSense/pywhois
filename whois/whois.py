@@ -24,6 +24,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import *
+from builtins import object
 import re
 import sys
 import socket
@@ -31,17 +39,7 @@ import optparse
 
 
 def enforce_ascii(a):
-    if isinstance(a, str) or isinstance(a, unicode):
-        r = ""
-        for i in a:
-            if ord(i) >= 128:
-                r += "?"
-            else:
-                r += i
-        return r
-    else:
-        return a
-
+    return a if isinstance(a, bytes) else bytes([63 if ord(c) > 127 else ord(c) for c in a])
 
 class NICClient(object):
 
@@ -102,7 +100,7 @@ class NICClient(object):
             s.connect((hostname, 43))
             # end takes bytes as an input
             queryBytes = None
-            if type(query) is not unicode:
+            if type(query) is not str:
                 query = query.decode('utf-8')
 
             if hostname == NICClient.DENICHOST:
@@ -121,12 +119,12 @@ class NICClient(object):
                     break
             s.close()
         except socket.error as socketerror:
-            print 'Socket Error:', socketerror
+            print('Socket Error:', socketerror)
             return ''
         else:
             nhost = None
             response = enforce_ascii(response)
-            if 'with "=xxx"' in response:
+            if b'with "=xxx"' in response:
                 return self.whois(query, hostname, flags, True)
             if flags & NICClient.WHOIS_RECURSE and nhost is None:
                 nhost = self.findwhois_server(response.decode(), hostname, query)
@@ -136,8 +134,8 @@ class NICClient(object):
 
     def choose_server(self, domain):
         """Choose initial lookup NIC host"""
-        if type(domain) is not unicode:
-            domain = domain.decode('utf-8').encode('idna')
+        if type(domain) is not str:
+            domain = domain.decode('utf-8').encode('idna').decode('utf-8')
         if domain.endswith("-NORID"):
             return NICClient.NORIDHOST
         pos = domain.rfind('.')
@@ -250,4 +248,4 @@ if __name__ == "__main__":
     options, args = parse_command_line(sys.argv)
     if options.b_quicklookup:
         flags = flags | NICClient.WHOIS_QUICK
-    print nic_client.whois_lookup(options.__dict__, args[1], flags)
+    print(nic_client.whois_lookup(options.__dict__, args[1], flags))
