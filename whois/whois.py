@@ -134,7 +134,6 @@ class NICClient(object):
 
     def choose_server(self, domain):
         """Choose initial lookup NIC host"""
-        print('domain:', domain)
         if type(domain) is not str:
             domain = domain.decode('utf-8').encode('idna').decode('utf-8')
         if domain.endswith("-NORID"):
@@ -172,7 +171,6 @@ class NICClient(object):
             )
         elif self.use_qnichost:
             nichost = self.choose_server(query_arg)
-            print('nichost:', nichost)
             if nichost is not None:
                 result = self.whois(query_arg, nichost, flags)
             else:
