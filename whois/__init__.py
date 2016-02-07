@@ -52,22 +52,23 @@ def extract_domain(url):
 
     tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'data', 'tlds.txt')
     suffixes = [
-        line.lower().strip()
+        line.lower().strip().encode('utf-8')
         for line in open(tlds_path).readlines()
         if not line.startswith('#')
     ]
 
-    if type(url) is not str:
+    if not isinstance(url, str):
         url = url.decode('utf-8')
-    url = re.sub('^.*://', '', url.encode('idna')).split('/')[0].lower()
+    url = re.sub(b'^.*://', b'', url.encode('idna')).split(b'/')[0].lower()
     domain = []
+    print('url:', url)
 
-    for section in url.split('.'):
+    for section in url.split(b'.'):
         if section in suffixes:
             domain.append(section)
         else:
             domain = [section]
-    return '.'.join(domain).decode('idna').encode('utf-8')
+    return b'.'.join(domain).decode('idna')
 
 
 if __name__ == '__main__':
