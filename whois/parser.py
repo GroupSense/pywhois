@@ -45,7 +45,7 @@ class PywhoisError(Exception):
 def datetime_parse(s):
     for known_format in KNOWN_FORMATS:
         try:
-            s = datetime.strptime(s.strip(), known_format)
+            s = datetime.strptime(s, known_format)
             break
         except ValueError as e:
             pass  # Wrong format, keep trying
@@ -57,7 +57,7 @@ def cast_date(s, dayfirst=False, yearfirst=False):
     if DATEUTIL:
         try:
             return dp.parse(
-                s.strip(),
+                s,
                 tzinfos=tz_data,
                 dayfirst=dayfirst,
                 yearfirst=yearfirst
@@ -114,11 +114,13 @@ class WhoisEntry(dict):
             if regex:
                 values = []
                 for value in re.findall(regex, self.text, re.IGNORECASE):
-                    if isinstance(value, basestring):
+                    value = value.strip()
+                    if value and isinstance(value, basestring):
                         # try casting to date format
-                        value = cast_date(value.strip(),
-                                          dayfirst=self.dayfirst,
-                                          yearfirst=self.yearfirst)
+                        value = cast_date(
+                            value,
+                            dayfirst=self.dayfirst,
+                            yearfirst=self.yearfirst)
                     if value and value not in values:
                         # avoid duplicates
                         values.append(value)
