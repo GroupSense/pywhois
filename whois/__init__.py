@@ -1,10 +1,17 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import *
 import re
 import sys
 import os
 import subprocess
 import socket
-from parser import WhoisEntry
-from whois import NICClient
+from .parser import WhoisEntry
+from .whois import NICClient
 
 
 def whois(url, command=False):
@@ -45,28 +52,28 @@ def extract_domain(url):
 
     tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'data', 'tlds.txt')
     suffixes = [
-        line.lower().strip()
+        line.lower().strip().encode('utf-8')
         for line in open(tlds_path).readlines()
         if not line.startswith('#')
     ]
 
-    if type(url) is not unicode:
+    if not isinstance(url, str):
         url = url.decode('utf-8')
-    url = re.sub('^.*://', '', url.encode('idna')).split('/')[0].lower()
+    url = re.sub(b'^.*://', b'', url.encode('idna')).split(b'/')[0].lower()
     domain = []
 
-    for section in url.split('.'):
+    for section in url.split(b'.'):
         if section in suffixes:
             domain.append(section)
         else:
             domain = [section]
-    return '.'.join(domain).decode('idna').encode('utf-8')
+    return b'.'.join(domain).decode('idna')
 
 
 if __name__ == '__main__':
     try:
         url = sys.argv[1]
     except IndexError:
-        print 'Usage: %s url' % sys.argv[0]
+        print('Usage: %s url' % sys.argv[0])
     else:
-        print whois(url)
+        print(whois(url))
