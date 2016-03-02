@@ -52,6 +52,11 @@ Or checkout latest version from repository:
 Changelog
 =========
 
+0.6 - 2015-03-02:
+
+* support added for python 3
+* updated TLD list
+
 0.5 - 2015-09-05:
 
 * added native client, which now handles whois requests by default
