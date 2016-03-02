@@ -1,3 +1,10 @@
+# coding=utf-8
+# parser.py - Module for parsing whois response data
+# Copyright (c) 2008 Andrey Petrov
+#
+# This module is part of pywhois and is released under
+# the MIT license: http://www.opensource.org/licenses/mit-license.php
+
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -7,13 +14,6 @@ standard_library.install_aliases()
 from builtins import *
 from builtins import str
 from past.builtins import basestring
-# coding=utf-8
-# parser.py - Module for parsing whois response data
-# Copyright (c) 2008 Andrey Petrov
-#
-# This module is part of pywhois and is released under
-# the MIT license: http://www.opensource.org/licenses/mit-license.php
-
 
 import json
 from datetime import datetime
