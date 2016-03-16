@@ -1,13 +1,16 @@
 import sys, os
 import setuptools
 
-version = '0.5.2'
+version = '0.6.1'
 
 setuptools.setup(
     name='python-whois',
     version=version,
     description="Whois querying and parsing of domain registration information.",
     long_description='',
+    install_requires=[
+        'future',
+    ],
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
