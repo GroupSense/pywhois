@@ -30,18 +30,6 @@ import socket
 import optparse
 
 
-def enforce_ascii(a):
-    if isinstance(a, str) or isinstance(a, unicode):
-        r = ""
-        for i in a:
-            if ord(i) >= 128:
-                r += "?"
-            else:
-                r += i
-        return r
-    else:
-        return a
-
 
 class NICClient(object):
 
@@ -125,14 +113,14 @@ class NICClient(object):
             return ''
         else:
             nhost = None
-            response = enforce_ascii(response)
+            response = response.decode('utf-8')
             if 'with "=xxx"' in response:
                 return self.whois(query, hostname, flags, True)
             if flags & NICClient.WHOIS_RECURSE and nhost is None:
-                nhost = self.findwhois_server(response.decode(), hostname, query)
+                nhost = self.findwhois_server(response, hostname, query)
             if nhost is not None:
                 response += self.whois(query, nhost, 0)
-            return response.decode()
+            return response
 
     def choose_server(self, domain):
         """Choose initial lookup NIC host"""
