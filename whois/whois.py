@@ -120,7 +120,7 @@ class NICClient(object):
             return ''
         else:
             nhost = None
-            response = response.decode('utf-8')
+            response = response.decode('utf-8', errors='replace')
             if b'with "=xxx"' in response:
                 return self.whois(query, hostname, flags, True)
             if flags & NICClient.WHOIS_RECURSE and nhost is None:
