@@ -97,8 +97,12 @@ class NICClient(object):
             s.connect((hostname, 43))
             # end takes bytes as an input
             queryBytes = None
-            if type(query) is not str:
+            try:
                 query = query.decode('utf-8')
+            except UnicodeEncodeError:
+                pass  # Already Unicode (python2's error)
+            except AttributeError:
+                pass  # Already Unicode (python3's error)
 
             if hostname == NICClient.DENICHOST:
                 queryBytes = "-T dn,ace -C UTF-8 " + query
@@ -132,14 +136,16 @@ class NICClient(object):
 
     def choose_server(self, domain):
         """Choose initial lookup NIC host"""
-        if type(domain) is not str:
+        try:
+            domain = domain.encode('idna').decode('utf-8')
+        except TypeError:
             domain = domain.decode('utf-8').encode('idna').decode('utf-8')
         if domain.endswith("-NORID"):
             return NICClient.NORIDHOST
-        pos = domain.rfind('.')
-        if pos == -1:
+        domain = domain.split('.')
+        if len(domain) < 2:
             return None
-        tld = domain[pos+1:]
+        tld = domain[-1]
         if tld[0].isdigit():
             return NICClient.ANICHOST
         return tld + NICClient.QNICHOST_TAIL

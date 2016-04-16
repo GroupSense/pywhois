@@ -1,1 +1,1 @@
-{"updated_date": ["14-apr-2008"], "expiration_date": ["14-apr-2009"], "status": ["ok"], "domain_name": ["URLOWL.COM", "urlowl.com"], "creation_date": ["14-apr-2008"]}
+{"domain_name": ["URLOWL.COM", "urlowl.com"], "expiration_date": "2009-04-14 00:00:00", "updated_date": "2008-04-14 00:00:00", "status": "ok", "creation_date": "2008-04-14 00:00:00"}

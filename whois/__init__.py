@@ -51,17 +51,18 @@ def extract_domain(url):
         return socket.gethostbyaddr(url)[0]
 
     tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'data', 'tlds.txt')
-    suffixes = [
-        line.lower().strip().encode('utf-8')
-        for line in open(tlds_path).readlines()
-        if not line.startswith('#')
-    ]
+    with open(tlds_path) as tlds_fil:
+        suffixes = [line.lower().encode('utf-8')
+                    for line in (x.strip() for x in tlds_fil)
+                    if not line.startswith('#')]
+    suff = 'xn--p1ai'
 
     if not isinstance(url, str):
         url = url.decode('utf-8')
-    url = re.sub(b'^.*://', b'', url.encode('idna')).split(b'/')[0].lower()
-    domain = []
+    url = re.sub('^.*://', '', url)
+    url = url.split('/')[0].lower().encode('idna')
 
+    domain = []
     for section in url.split(b'.'):
         if section in suffixes:
             domain.append(section)

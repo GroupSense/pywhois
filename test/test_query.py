@@ -23,6 +23,3 @@ class TestQuery(unittest.TestCase):
     def test_unicode_domain_and_tld(self):
         domain = 'россия.рф'
         whois(domain)
-
-    def test_fail(self):
-        raise Exception('Whiskey Tango Foxtrot, over?')
