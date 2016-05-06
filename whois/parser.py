@@ -783,8 +783,8 @@ class WhoisAt(WhoisEntry):
         'zipcode': 'postal code: *(.+)',
         'city': 'city: *(.+)',
         'country': 'country: *(.+)',
-        'phone': 'Phone: *(.+)',
-        'fax': 'Fax: *(.+)',
+        'phone': 'phone: *(.+)',
+        'fax': 'fax-no: *(.+)',
         'changed': 'changed: *(.+)',
     }
 
