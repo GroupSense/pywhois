@@ -204,6 +204,8 @@ class WhoisEntry(dict):
             return WhoisBg(domain, text)
         elif domain.endswith('.de'):
             return WhoisDe(domain, text)
+        elif domain.endswith('.at'):
+            return WhoisAt(domain, text)
         elif domain.endswith('.ca'):
             return WhoisCa(domain, text)
         elif domain.endswith('.be'):
@@ -771,6 +773,26 @@ class WhoisDe(WhoisEntry):
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
 
+class WhoisAt(WhoisEntry):
+    """Whois parser for .at domains
+    """
+    regex = {
+        'name': 'personname: *(.+)',
+        'org': 'organization: *(.+)',
+        'address': 'street address: *(.+)',
+        'zipcode': 'postal code: *(.+)',
+        'city': 'city: *(.+)',
+        'country': 'country: *(.+)',
+        'phone': 'Phone: *(.+)',
+        'fax': 'Fax: *(.+)',
+        'changed': 'changed: *(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'Status: free' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
 
 class WhoisBe(WhoisEntry):
     """Whois parser for .be domains
