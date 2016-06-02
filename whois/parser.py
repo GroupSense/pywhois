@@ -561,7 +561,7 @@ class WhoisFr(WhoisEntry):
         'domain_name': 'domain: *(.+)',
         'registrar': 'registrar: *(.+)',
         'creation_date': 'created: *(.+)',
-        'expiration_date': 'anniversary: *(.+)',
+        'expiration_date': 'Expir\w+ Date:\s?(.+)',
         'name_servers': 'nserver: *(.+)',  # list of name servers
         'status': 'status: *(.+)',  # list of statuses
         'emails': EMAIL_REGEX,  # list of email addresses
