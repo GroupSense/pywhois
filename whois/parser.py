@@ -151,7 +151,7 @@ class WhoisEntry(dict):
 
     def __getattr__(self, name):
         return self.get(name)
-        
+
 
     def __str__(self):
         handler = lambda e: str(e)
@@ -226,6 +226,10 @@ class WhoisEntry(dict):
             return WhoisBiz(domain, text)
         elif domain.endswith('.mobi'):
             return WhoisMobi(domain, text)
+        elif domain.endswith('.ch'):
+            return WhoisChLi(domain, text)
+        elif domain.endswith('.li'):
+            return WhoisChLi(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -265,7 +269,7 @@ class WhoisOrg(WhoisEntry):
         'status':           'Status: *(.+)', # list of statuses
         'emails':           EMAIL_REGEX, # list of email addresses
     }
-    
+
     def __init__(self, domain, text):
         if text.strip() == 'NOT FOUND':
             raise PywhoisError(text)
@@ -320,7 +324,7 @@ class WhoisNl(WhoisEntry):
                 self['zip_code'], _, self['city'] = lines[2].partition(' ')
             self['country'] = lines[-1]
 
-                
+
 
 class WhoisName(WhoisEntry):
     """Whois parser for .name domains
@@ -991,6 +995,25 @@ class WhoisKg(WhoisEntry):
     }
     def __init__(self, domain, text):
         if 'Data not found. This domain is available for registration' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisChLi(WhoisEntry):
+    """Whois Parser for .ch and .li domains
+    """
+    regex = {
+        'domain_name':                      '\nDomain name:\n*(.+)',
+        'registrant':                       'Holder of domain name:\n*([\n\s\S]+)\nContractual Language:',
+        'registrar':                        'Registrar:\n*(.+)',
+        'creation_date':                    'First registration date:\n*(.+)',
+        'dnssec':                           'DNSSEC:*([\S]+)',
+        'tech-c':                           'Technical contact:\n*([\n\s\S]+)\nRegistrar:',
+        'name_servers':                     'Name servers:\n *([\n\S\s]+)'
+    }
+    def __init__(self,domain,text):
+        if 'We do not have an entry in our database matching your query.' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
