@@ -588,7 +588,7 @@ class WhoisFi(WhoisEntry):
         'updated_date':                   'modified: *([\S]+)',
         'expiration_date':                'expires: *([\S]+)',
         'name_servers':                   'nserver: *([\S]+) \[\S+\]',  # list of name servers
-        'name_server_statuses':           'nserver: *([\S]+) \[(\S+)\]',  # list of name servers and statuses
+        'name_server_statuses':           'nserver: *([\S]+) \[\S+\]',  # list of name servers and statuses
         'dnssec':                         'dnssec: *([\S]+)',
     }
 
