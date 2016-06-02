@@ -121,7 +121,7 @@ class NICClient(object):
         else:
             nhost = None
             response = response.decode('utf-8', errors='replace')
-            if b'with "=xxx"' in response:
+            if 'with "=xxx"' in response:
                 return self.whois(query, hostname, flags, True)
             if flags & NICClient.WHOIS_RECURSE and nhost is None:
                 nhost = self.findwhois_server(response, hostname, query)
