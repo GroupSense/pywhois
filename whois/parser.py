@@ -135,6 +135,8 @@ class WhoisEntry(dict):
                     if value and value not in values:
                         # avoid duplicates
                         values.append(value)
+                if values and attr in ('registrar', 'whois_server', 'referral_url'):
+                    values = values[-1] # ignore junk
                 if len(values) == 1:
                     values = values[0]
                 elif not values:
