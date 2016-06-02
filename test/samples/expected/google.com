@@ -1,1 +1,1 @@
-{"updated_date": ["10-apr-2006"], "expiration_date": ["14-sep-2011"], "status": ["clientDeleteProhibited", "clientTransferProhibited", "clientUpdateProhibited"], "domain_name": ["GOOGLE.COM", "google.com"], "creation_date": ["15-sep-1997"]}
+{"domain_name": ["GOOGLE.COM", "google.com"], "expiration_date": "2011-09-14 00:00:00", "updated_date": "2006-04-10 00:00:00", "status": ["clientDeleteProhibited", "clientTransferProhibited", "clientUpdateProhibited"], "creation_date": "1997-09-15 00:00:00"}

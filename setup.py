@@ -29,6 +29,8 @@ setuptools.setup(
     extras_require={
         'better date conversion': ["python-dateutil"]
     },
+    test_suite='nose.collector',
+    tests_require=['nose', 'simplejson'],
     include_package_data=True,
     zip_safe=False
 )

@@ -1,1 +1,1 @@
-{"updated_date": ["04-jun-2008"], "expiration_date": ["29-apr-2009"], "status": ["clientDeleteProhibited", "clientTransferProhibited", "clientUpdateProhibited"], "domain_name": ["REDDIT.COM", "REDDIT.COM"], "creation_date": ["29-apr-2005"]}
+{"domain_name": "REDDIT.COM", "expiration_date": "2009-04-29 00:00:00", "updated_date": "2008-06-04 00:00:00", "status": ["clientDeleteProhibited", "clientTransferProhibited", "clientUpdateProhibited"], "creation_date": "2005-04-29 00:00:00"}

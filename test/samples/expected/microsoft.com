@@ -1,1 +1,1 @@
-{"updated_date": ["10-oct-2006"], "expiration_date": ["03-may-2014"], "status": ["clientDeleteProhibited", "clientTransferProhibited", "clientUpdateProhibited"], "domain_name": ["MICROSOFT.COM"], "creation_date": ["02-may-1991"]}
+{"domain_name": "MICROSOFT.COM", "expiration_date": "2014-05-03 00:00:00", "updated_date": "2006-10-10 00:00:00", "status": ["clientDeleteProhibited", "clientTransferProhibited", "clientUpdateProhibited"], "creation_date": "1991-05-02 00:00:00"}

@@ -1,1 +1,1 @@
-{"updated_date": ["28-mar-2008"], "expiration_date": ["04-jan-2016"], "status": ["clientTransferProhibited"], "domain_name": ["IMDB.COM", "IMDB.COM"], "creation_date": ["05-jan-1996"]}
+{"domain_name": "IMDB.COM", "expiration_date": "2016-01-04 00:00:00", "updated_date": "2008-03-28 00:00:00", "status": "clientTransferProhibited", "creation_date": "1996-01-05 00:00:00"}
