@@ -19,6 +19,12 @@ def whois(url, command=False):
     ip_match = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", url)
     if ip_match:
         domain = url
+        try:
+            result = socket.gethostbyaddr(url)
+        except socket.herror as e:
+            pass
+        else:
+            domain = result[0]
     else:
         domain = extract_domain(url)
     if command:
