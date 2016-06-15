@@ -60,7 +60,7 @@ Note that then you will need to manually install the futures module, which allow
 Changelog
 =========
 
-0.6 - 2015-03-02:
+0.6 - 2016-03-02:
 
 * support added for python 3
 * updated TLD list
