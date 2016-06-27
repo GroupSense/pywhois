@@ -95,5 +95,91 @@ class TestParser(unittest.TestCase):
                       % (fail, total))
 
 
+    def test_ca_parse(self):
+        data = """
+        Domain name:           testdomain.ca
+        Domain status:         registered
+        Creation date:         2000/11/20
+        Expiry date:           2020/03/08
+        Updated date:          2016/04/29
+        DNSSEC:                Unsigned
+
+        Registrar:
+            Name:              Webnames.ca Inc.
+            Number:            70
+
+        Registrant:
+            Name:              Test Industries
+
+        Administrative contact:
+            Name:              Test Person1
+            Postal address:    Test Address
+                               Test City, TestVille
+            Phone:             +1.1235434123x123
+            Fax:               +1.123434123
+            Email:             testperson1@testcompany.ca
+
+        Technical contact:
+            Name:              Test Persion2
+            Postal address:    Other TestAddress
+                               TestTown OCAS Canada
+            Phone:             +1.09876545123
+            Fax:               +1.12312993873
+            Email:             testpersion2@testcompany.ca
+
+        Name servers:
+            ns1.testserver1.net
+            ns2.testserver2.net
+        """
+        results = WhoisEntry.load('testcompany.ca', data)
+        expected_results = {
+            "updated_date": "2016-04-29 00:00:00", 
+            "registrant_name": [
+                "Webnames.ca Inc.", 
+                "Test Industries", 
+                "Test Person1", 
+                "Test Persion2"
+            ], 
+            "fax": [
+                "+1.123434123", 
+                "+1.12312993873"
+            ], 
+            "dnssec": "Unsigned", 
+            "registrant_number": "70", 
+            "expiration_date": "2020-03-08 00:00:00", 
+            "domain_name": "testdomain.ca", 
+            "creation_date": "2000-11-20 00:00:00", 
+            "phone": [
+                "+1.1235434123x123", 
+                "+1.09876545123"
+            ], 
+            "domain_status": "registered", 
+            "emails": [
+                "testperson1@testcompany.ca", 
+                "testpersion2@testcompany.ca"
+            ]
+        }
+        
+        fail = 0
+        total = 0
+
+        # Compare each key
+        for key in expected_results:
+            total += 1
+            result = results.get(key)
+            if isinstance(result, datetime.datetime):
+                result = str(result)
+            expected = expected_results.get(key)
+            if expected != result:
+                print("%s \t(%s):\t %s != %s" % (domain, key, result, expected))
+                fail += 1
+        if fail:
+            self.fail("%d/%d sample whois attributes were not parsed properly!"
+                      % (fail, total))
+
+
+
+        
+
 if __name__ == '__main__':
     unittest.main()

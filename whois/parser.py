@@ -457,8 +457,17 @@ class WhoisCa(WhoisEntry):
     """Whois parser for .ca domains
     """
     regex = {
-        'registrant_name':                'Name: *(.+)',
+        'domain_name':                    'Domain name: *(.+)',
+        'registrant_name':                '(?<!Domain) Name: *(.+)',
         'registrant_number':              'Number: *(.+)\n',
+        'domain_status':                  'Domain status: *(.+)',
+        'emails':                         'Email: *(.+)',
+        'updated_date':                   'Updated Date: *(.+)',
+        'creation_date':                  'Creation Date: *(.+)',
+        'expiration_date':                'Expiry Date: *(.+)',
+        'phone':                          'Phone: *(.+)',
+        'fax':                            'Fax: *(.+)',
+        'dnssec':                         'dnssec: *([\S]+)'
     }
 
     def __init__(self, domain, text):
