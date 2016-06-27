@@ -985,7 +985,8 @@ class WhoisIo(WhoisEntry):
     regex = {
         'status':           'Status\s*: *(.+)',
         'name_servers':     'NS \d?\s*: *(.+)',
-        'owner':            'Owner\s*: *(.+)',
+        #'owner':            'Owner\s*: *(.+)',
+        'owner':            'Owner OrgName\s*: *(.+)',
         'expiration_date':  'Expiry\s*: *(.+)',
         'domain_name':      'Domain\s*: *(.+)',
         'registrar':        r'Check for \'[\w\.]*\' --- (.+)',
