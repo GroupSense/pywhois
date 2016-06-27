@@ -126,7 +126,7 @@ class WhoisEntry(dict):
                 values = []
                 for value in re.findall(regex, self.text, re.IGNORECASE):
                     value = value.strip()
-                    if value and isinstance(value, basestring):
+                    if value and isinstance(value, basestring) and not value.isdigit():
                         # try casting to date format
                         value = cast_date(
                             value,
