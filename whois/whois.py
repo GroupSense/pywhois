@@ -91,12 +91,12 @@ class NICClient(object):
         for the region-specifc whois server and do a lookup
         there for contact details
         """
+        response = b''
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(10)
             s.connect((hostname, 43))
-            # end takes bytes as an input
-            queryBytes = None
+
             try:
                 query = query.decode('utf-8')
             except UnicodeEncodeError:
@@ -105,34 +105,32 @@ class NICClient(object):
                 pass  # Already Unicode (python3's error)
 
             if hostname == NICClient.DENICHOST:
-                queryBytes = "-T dn,ace -C UTF-8 " + query
+                query_bytes = "-T dn,ace -C UTF-8 " + query
             elif hostname.endswith(NICClient.QNICHOST_TAIL) and many_results:
-                queryBytes = '=' + query
+                query_bytes = '=' + query
             else:
-                queryBytes = query
-            s.send((queryBytes + "\r\n").encode('idna'))
+                query_bytes = query
+            s.send((query_bytes + "\r\n").encode('idna'))
             # recv returns bytes
-            response = b''
             while True:
                 d = s.recv(4096)
                 response += d
                 if not d:
                     break
             s.close()
-        except socket.error as socketerror:
+        except socket.error:
             print('Socket Error:', socketerror)
-            return ''
-        else:
-            nhost = None
-            response = response.decode('utf-8', errors='replace')
-            if 'with "=xxx"' in response:
-                return self.whois(query, hostname, flags, True)
-            if flags & NICClient.WHOIS_RECURSE and nhost is None:
-                nhost = self.findwhois_server(response, hostname, query)
-            if nhost is not None:
-                response += self.whois(query, nhost, 0)
             return response
 
+        nhost = None
+        response = response.decode('utf-8', errors='replace')
+        if 'with "=xxx"' in response:
+            return self.whois(query, hostname, flags, True)
+        if flags & NICClient.WHOIS_RECURSE and nhost is None:
+            nhost = self.findwhois_server(response, hostname, query)
+        if nhost is not None:
+            response += self.whois(query, nhost, 0)
+        return response
 
     def choose_server(self, domain):
         """Choose initial lookup NIC host"""
