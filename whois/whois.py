@@ -120,7 +120,6 @@ class NICClient(object):
             s.close()
         except socket.error as socketerror:
             print('Socket Error:', socketerror)
-            return response
 
         nhost = None
         response = response.decode('utf-8', errors='replace')
