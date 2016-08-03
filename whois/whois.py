@@ -110,7 +110,7 @@ class NICClient(object):
                 query_bytes = '=' + query
             else:
                 query_bytes = query
-            s.send((query_bytes + "\r\n").encode('idna'))
+            s.send((query_bytes).encode('idna') + b"\r\n")
             # recv returns bytes
             while True:
                 d = s.recv(4096)
