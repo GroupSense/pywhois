@@ -118,7 +118,7 @@ class NICClient(object):
                 if not d:
                     break
             s.close()
-        except socket.error:
+        except socket.error as socketerror:
             print('Socket Error:', socketerror)
             return response
 
