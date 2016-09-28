@@ -598,17 +598,18 @@ class WhoisFi(WhoisEntry):
     """Whois parser for .fi domains
     """
     regex = {
-        'domain_name':                    'domain: *([\S]+)',
-        'name':                           'descr: *([\S\ ]+)',
-        'address':                        'address: *([\S\ ]+)',
-        'phone':                          'phone: *([\S\ ]+)',
-        'status':                         'status: *([\S]+)',  # list of statuses
-        'creation_date':                  'created: *([\S]+)',
-        'updated_date':                   'modified: *([\S]+)',
-        'expiration_date':                'expires: *([\S]+)',
-        'name_servers':                   'nserver: *([\S]+) \[\S+\]',  # list of name servers
-        'name_server_statuses':           'nserver: *([\S]+) \[\S+\]',  # list of name servers and statuses
-        'dnssec':                         'dnssec: *([\S]+)',
+        'domain_name':                    'domain\.*: *([\S]+)',
+        'name':                           'descr\.*: *([\S\ ]+)',
+        'address':                        'address\.*: *([\S\ ]+)',
+        'phone':                          'phone\.*: *([\S\ ]+)',
+        'status':                         'status\.*: *([\S]+)',  # list of statuses
+        'creation_date':                  'created\.*: *([\S]+)',
+        'updated_date':                   'modified\.*: *([\S]+)',
+        'expiration_date':                'expires\.*: *([\S]+)',
+        'name_servers':                   'nserver\.*: *([\S]+) \[\S+\]',  # list of name servers
+        'name_server_statuses':           'nserver\.*: *([\S]+) \[\S+\]',  # list of name servers and statuses
+        'dnssec':                         'dnssec\.*: *([\S]+)',
+
     }
 
     def __init__(self, domain, text):
