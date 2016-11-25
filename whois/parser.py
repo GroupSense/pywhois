@@ -157,6 +157,11 @@ class WhoisEntry(dict):
         handler = lambda e: str(e)
         return json.dumps(self, indent=2, default=handler)
 
+    def __getstate__(self):
+        return self.__dict__
+
+    def __setstate__(self, state):
+        self.__dict__ = state
 
     @staticmethod
     def load(domain, text):
