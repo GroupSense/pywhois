@@ -55,13 +55,14 @@ class NICClient(object):
     BNICHOST = "whois.registro.br"
     NORIDHOST = "whois.norid.no"
     IANAHOST = "whois.iana.org"
+    PANDIHOST = "whois.pandi.or.id"
     DENICHOST = "de.whois-servers.net"
     DEFAULT_PORT = "nicname"
 
     WHOIS_RECURSE = 0x01
     WHOIS_QUICK = 0x02
 
-    ip_whois = [LNICHOST, RNICHOST, PNICHOST, BNICHOST]
+    ip_whois = [LNICHOST, RNICHOST, PNICHOST, BNICHOST,PANDIHOST]
 
     def __init__(self):
         self.use_qnichost = False
@@ -139,6 +140,9 @@ class NICClient(object):
             domain = domain.decode('utf-8').encode('idna').decode('utf-8')
         if domain.endswith("-NORID"):
             return NICClient.NORIDHOST
+        if domain.endswith("id"):
+            return NICClient.PANDIHOST
+
         domain = domain.split('.')
         if len(domain) < 2:
             return None
@@ -238,6 +242,9 @@ def parse_command_line(argv):
     parser.add_option("-6", "--6bone", action="store_const",
                       const=NICClient.SNICHOST, dest="whoishost",
                       help="Lookup using host " + NICClient.SNICHOST)
+    parser.add_option("-n", "--ina", action="store_const",
+                          const=NICClient.PANDIHOST, dest="whoishost",
+                          help="Lookup using host " + NICClient.PANDIHOST)
     parser.add_option("-?", "--help", action="help")
 
     return parser.parse_args(argv)

@@ -237,6 +237,8 @@ class WhoisEntry(dict):
             return WhoisChLi(domain, text)
         elif domain.endswith('.li'):
             return WhoisChLi(domain, text)
+        elif domain.endswith('.id'):
+            return WhoisID(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1061,3 +1063,76 @@ class WhoisChLi(WhoisEntry):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
+
+class WhoisID(WhoisEntry):
+        """Whois parser for .id domains
+        """
+        regex = {
+            'domain_id':                   'Domain ID:(.+)',
+            'domain_name':                 'Domain Name:(.+)',
+            'creation_date':               'Domain Create Date:(.+)',
+            'updated_date':                'Domain Last Updated Date:(.+)',
+            'expiration_date':             'Domain Expiration Date:(.+)',
+            'transfer_date':               'Last Transferred Date:(.+)',
+            'trademark_name':              'Trademark Name:(.+)',
+            'trademark_country':           'Trademark Country:(.+)',
+            'trademark_number':            'Trademark Number:(.+)',
+            'trademark_application_date':  'Date Trademark Applied For:(.+)',
+            'trademark_registration_date': 'Date Trademark Registered:(.+)',
+            'registrar':                   'Sponsoring Registrar:(.+)',
+            'created_by':                  'Created by:(.+)',
+            'updated_by':                  'Last Updated by Registrar:(.+)',
+            'status':                      'Domain Status:(.+)',  # list of statuses
+            'registrant_id':               'Registrant ID:(.+)',
+            'registrant_name':             'Registrant Name:(.+)',
+            'registrant_org':              'Registrant Organization:(.+)',
+            'registrant_address':          'Registrant Address:(.+)',
+            'registrant_address2':         'Registrant Address2:(.+)',
+            'registrant_address3':         'Registrant Address3:(.+)',
+            'registrant_city':             'Registrant City:(.+)',
+            'registrant_state_province':   'Registrant State/Province:(.+)',
+            'registrant_country':          'Registrant Country/Economy:(.+)',
+            'registrant_postal_code':      'Registrant Postal Code:(.+)',
+            'registrant_phone':            'Registrant Phone:(.+)',
+            'registrant_phone_ext':        'Registrant Phone Ext\.:(.+)',
+            'registrant_fax':              'Registrant FAX:(.+)',
+            'registrant_fax_ext':          'Registrant FAX Ext\.:(.+)',
+            'registrant_email':            'Registrant E-mail:(.+)',
+            'admin_id':                    'Admin ID:(.+)',
+            'admin_name':                  'Admin Name:(.+)',
+            'admin_org':                   'Admin Organization:(.+)',
+            'admin_address':               'Admin Address:(.+)',
+            'admin_address2':              'Admin Address2:(.+)',
+            'admin_address3':              'Admin Address3:(.+)',
+            'admin_city':                  'Admin City:(.+)',
+            'admin_state_province':        'Admin State/Province:(.+)',
+            'admin_country':               'Admin Country/Economy:(.+)',
+            'admin_postal_code':           'Admin Postal Code:(.+)',
+            'admin_phone':                 'Admin Phone:(.+)',
+            'admin_phone_ext':             'Admin Phone Ext\.:(.+)',
+            'admin_fax':                   'Admin FAX:(.+)',
+            'admin_fax_ext':               'Admin FAX Ext\.:(.+)',
+            'admin_email':                 'Admin E-mail:(.+)',
+            'tech_id':                     'Tech ID:(.+)',
+            'tech_name':                   'Tech Name:(.+)',
+            'tech_org':                    'Tech Organization:(.+)',
+            'tech_address':                'Tech Address:(.+)',
+            'tech_address2':               'Tech Address2:(.+)',
+            'tech_address3':               'Tech Address3:(.+)',
+            'tech_city':                   'Tech City:(.+)',
+            'tech_state_province':         'Tech State/Province:(.+)',
+            'tech_country':                'Tech Country/Economy:(.+)',
+            'tech_postal_code':            'Tech Postal Code:(.+)',
+            'tech_phone':                  'Tech Phone:(.+)',
+            'tech_phone_ext':              'Tech Phone Ext\.:(.+)',
+            'tech_fax':                    'Tech FAX:(.+)',
+            'tech_fax_ext':                'Tech FAX Ext\.:(.+)',
+            'tech_email':                  'Tech E-mail:(.+)',
+            'name_servers':                'Nameservers:(.+)',  # list of name servers
+        }
+
+        def __init__(self, domain, text):
+            if 'NOT FOUND' in text:
+                raise PywhoisError(text)
+            else:
+                WhoisEntry.__init__(self, domain, text, self.regex)
