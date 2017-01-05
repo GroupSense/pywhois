@@ -239,6 +239,8 @@ class WhoisEntry(dict):
             return WhoisChLi(domain, text)
         elif domain.endswith('.id'):
             return WhoisID(domain, text)
+        elif domain.endswith('.sk'):
+            return WhoisSK(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1064,6 +1066,7 @@ class WhoisChLi(WhoisEntry):
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
 
+
 class WhoisID(WhoisEntry):
         """Whois parser for .id domains
         """
@@ -1087,6 +1090,39 @@ class WhoisID(WhoisEntry):
             'registrant_fax':              'Registrant FAX:(.+)',
             'registrant_email':            'Registrant Email:(.+)',
             'name_servers':                'Name Server:(.+)',  # list of name servers
+        }
+
+        def __init__(self, domain, text):
+            if 'NOT FOUND' in text:
+                raise PywhoisError(text)
+            else:
+                WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisSK(WhoisEntry):
+        """
+        Whois parser for .sk domains
+         """
+        regex = {
+            'domain_name':                  'Domain-name *(.+)',
+            'expiration_date':              'Valid-date *(.+)',
+            'status':                       'Domain-status *(.+)',
+            'name_servers':                 'dns_name *(.+)',
+            'tech_id':                      'Tech-id *(.+)',
+            'tech_name':                    'Tech-name *(.+)',
+            'tech_org_id':                  'Tech-org.-ID *(.+)',
+            'tech_address':                 'Tech-address *(.+)',
+            'tech_email':                   'Tech-email *(.+)',
+            'admin_id':                     'Admin-id *(.+)',
+            'admin_name':                   'Admin-name *(.+)',
+            'admin_legal_form':             'Admin-legal-form (.+)',
+            'admin_org_id':                 'Admin-org.-ID *(.+)',
+            'admin_address':                'Admin-address *(.+)',
+            'admin_email':                  'Admin-email *(.+)',
+            'updated_date':                 'Last-update *(.+)',
+            'tech_phone':                   'Tech-telephone *(.+)',
+            'name_servers_ipv4':            'dns_IPv4 *(.+)',
+
         }
 
         def __init__(self, domain, text):
