@@ -1126,7 +1126,7 @@ class WhoisSK(WhoisEntry):
         }
 
         def __init__(self, domain, text):
-            if 'NOT FOUND' in text:
+            if 'Not found' in text:
                 raise PywhoisError(text)
             else:
                 WhoisEntry.__init__(self, domain, text, self.regex)
