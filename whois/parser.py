@@ -46,6 +46,7 @@ KNOWN_FORMATS = [
     '%d/%m/%Y %H:%M:%S',     # 23/04/2015 12:00:07 EEST
     '%d/%m/%Y %H:%M:%S %Z',     # 23/04/2015 12:00:07 EEST
     '%d/%m/%Y %H:%M:%S.%f %Z',  # 23/04/2015 12:00:07.619546 EEST
+    '%B %d %Y',                 # August 14 2017
 ]
 
 
@@ -241,6 +242,12 @@ class WhoisEntry(dict):
             return WhoisID(domain, text)
         elif domain.endswith('.sk'):
             return WhoisSK(domain, text)
+        elif domain.endswith('.se'):
+            return WhoisSe(domain, text)
+        elif domain.endswith('.nu'):
+            return WhoisSe(domain, text)
+        elif domain.endswith('.is'):
+            return WhoisIs(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1130,3 +1137,45 @@ class WhoisSK(WhoisEntry):
                 raise PywhoisError(text)
             else:
                 WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisSe(WhoisEntry):
+    """Whois parser for .se domains
+    """
+    regex = {
+        'domain_name':                    'domain\.*: *(.+)',
+        'creation_date':                  'created\.*: *(.+)',
+        'updated_date':                   'modified\.*: *(.+)',
+        'expiration_date':                'expires\.*: *(.+)',
+        'transfer_date':                  'transferred\.*: *(.+)',
+        'name_servers':                   'nserver\.*: *(.+)',  # list of name servers
+        'dnssec':                         'dnssec\.*: *(.+)',
+        'status':                         'status\.*: *(.+)',  # list of statuses
+        'registrar':                      'registrar: *(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'not found.' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisIs(WhoisEntry):
+    """Whois parser for .se domains
+    """
+    regex = {
+        'domain_name':      'domain\.*: *(.+)',
+        'name':             'person\.*: *(.+)',
+        'address':          'address\.*: *(.+)',
+        'creation_date':    'created\.*: *(.+)',
+        'expiration_date':  'expires\.*: *(.+)',
+        'name_servers':     'nserver\.*: *(.+)',  # list of name servers
+        'dnssec':           'dnssec\.*: *(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'No entries found' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
