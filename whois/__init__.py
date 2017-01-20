@@ -14,6 +14,7 @@ from .parser import WhoisEntry
 from .whois import NICClient
 
 
+
 def whois(url, command=False):
     # clean domain to expose netloc
     ip_match = re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", url)
@@ -34,7 +35,7 @@ def whois(url, command=False):
     else:
         # try builtin client
         nic_client = NICClient()
-        text = nic_client.whois_lookup(None, domain, 0)
+        text = nic_client.whois_lookup(None, domain.encode('idna'), 0)
     return WhoisEntry.load(domain, text)
 
 
