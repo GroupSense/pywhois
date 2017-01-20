@@ -125,17 +125,19 @@ class WhoisEntry(dict):
         for attr, regex in list(self._regex.items()):
             if regex:
                 values = []
-                for value in re.findall(regex, self.text, re.IGNORECASE):
-                    value = value.strip()
-                    if value and isinstance(value, basestring) and not value.isdigit() and '_date' in attr:
-                        # try casting to date format
-                        value = cast_date(
-                            value,
-                            dayfirst=self.dayfirst,
-                            yearfirst=self.yearfirst)
-                    if value and value not in values:
-                        # avoid duplicates
-                        values.append(value)
+                for data in re.findall(regex, self.text, re.IGNORECASE):
+                    matches = data if isinstance(data, tuple) else [data]
+                    for value in matches:
+                        value = value.strip()
+                        if value and isinstance(value, basestring) and not value.isdigit() and '_date' in attr:
+                            # try casting to date format
+                            value = cast_date(
+                                value,
+                                dayfirst=self.dayfirst,
+                                yearfirst=self.yearfirst)
+                        if value and value not in values:
+                            # avoid duplicates
+                            values.append(value)
                 if values and attr in ('registrar', 'whois_server', 'referral_url'):
                     values = values[-1] # ignore junk
                 if len(values) == 1:
