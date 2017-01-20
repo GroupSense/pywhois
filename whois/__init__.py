@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -39,43 +41,53 @@ def whois(url, command=False):
     return WhoisEntry.load(domain, text)
 
 
+suffixes = None
 def extract_domain(url):
     """Extract the domain from the given URL
 
-    >>> extract_domain('http://www.google.com.au/tos.html')
-    'google.com.au'
-    >>> extract_domain('www.webscraping.com')
-    'webscraping.com'
-    >>> extract_domain('198.252.206.140')
-    'stackoverflow.com'
-    >>> extract_domain('102.112.2O7.net')
-    '2o7.net'
-    >>> extract_domain('1-0-1-1-1-0-1-1-1-1-1-1-1-.0-0-0-0-0-0-0-0-0-0-0-0-0-10-0-0-0-0-0-0-0-0-0-0-0-0-0.info')
-    '0-0-0-0-0-0-0-0-0-0-0-0-0-10-0-0-0-0-0-0-0-0-0-0-0-0-0.info'
+    >>> print(extract_domain('http://www.google.com.au/tos.html'))
+    google.com.au
+    >>> print(extract_domain('abc.def.com'))
+    def.com
+    >>> print(extract_domain(u'www.公司.hk'))
+    公司.hk
+    >>> print(extract_domain('chambagri.fr'))
+    chambagri.fr
+    >>> print(extract_domain('www.webscraping.com'))
+    webscraping.com
+    >>> print(extract_domain('198.252.206.140'))
+    stackoverflow.com
+    >>> print(extract_domain('102.112.2O7.net'))
+    2o7.net
+    >>> print(extract_domain('1-0-1-1-1-0-1-1-1-1-1-1-1-.0-0-0-0-0-0-0-0-0-0-0-0-0-10-0-0-0-0-0-0-0-0-0-0-0-0-0.info'))
+    0-0-0-0-0-0-0-0-0-0-0-0-0-10-0-0-0-0-0-0-0-0-0-0-0-0-0.info
     """
     if re.match(r'\d+\.\d+\.\d+\.\d+', url):
         # this is an IP address
         return socket.gethostbyaddr(url)[0]
 
-    tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'data', 'tlds.txt')
-    with open(tlds_path) as tlds_fil:
-        suffixes = [line.lower().encode('utf-8')
-                    for line in (x.strip() for x in tlds_fil)
-                    if not line.startswith('#')]
-    suff = 'xn--p1ai'
+    # load known TLD suffixes
+    global suffixes
+    if not suffixes:
+        # downloaded from https://publicsuffix.org/list/public_suffix_list.dat
+        tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'data', 'public_suffix_list.dat')
+        with open(tlds_path) as tlds_fp:
+            suffixes = set(line.encode('utf-8') for line in tlds_fp.read().splitlines() if line and not line.startswith('//'))
 
     if not isinstance(url, str):
         url = url.decode('utf-8')
     url = re.sub('^.*://', '', url)
     url = url.split('/')[0].lower().encode('idna')
 
-    domain = []
-    for section in url.split(b'.'):
-        if section in suffixes:
-            domain.append(section)
-        else:
-            domain = [section]
-    return b'.'.join(domain).decode('idna')
+    # find the longest suffix match
+    domain = b''
+    for section in reversed(url.split(b'.')):
+        if domain:
+            domain = '.' + domain
+        domain = section + domain
+        if domain not in suffixes:
+            break
+    return domain.decode('idna')
 
 
 if __name__ == '__main__':
