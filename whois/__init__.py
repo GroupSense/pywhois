@@ -59,6 +59,8 @@ def extract_domain(url):
     stackoverflow.com
     >>> print(extract_domain('102.112.2O7.net'))
     2o7.net
+    >>> print(extract_domain('globoesporte.globo.com'))
+    globo.com
     >>> print(extract_domain('1-0-1-1-1-0-1-1-1-1-1-1-1-.0-0-0-0-0-0-0-0-0-0-0-0-0-10-0-0-0-0-0-0-0-0-0-0-0-0-0.info'))
     0-0-0-0-0-0-0-0-0-0-0-0-0-10-0-0-0-0-0-0-0-0-0-0-0-0-0.info
     """

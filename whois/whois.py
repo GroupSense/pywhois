@@ -111,7 +111,7 @@ class NICClient(object):
             if hostname == NICClient.DENICHOST:
                 query_bytes = "-T dn,ace -C UTF-8 " + query
             elif hostname.endswith(NICClient.QNICHOST_TAIL) and many_results:
-                query_bytes = '='
+                query_bytes = '=' + query
             else:
                 query_bytes = query
             s.send((query_bytes) + b"\r\n")
