@@ -251,6 +251,8 @@ class WhoisEntry(dict):
             return WhoisSe(domain, text)
         elif domain.endswith('.is'):
             return WhoisIs(domain, text)
+        elif domain.endswith('.dk'):
+            return WhoisDk(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1179,6 +1181,24 @@ class WhoisIs(WhoisEntry):
 
     def __init__(self, domain, text):
         if 'No entries found' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+class WhoisDk(WhoisEntry):
+    """Whois parser for .dk domains
+    """
+    regex = {
+        'domain_name':     'Domain: *(.+)',
+        'creation_date':   'Registered: *(.+)',
+        'expiration_date': 'Expires: *(.+)',
+        'dnssec':          'Dnssec: *(.+)',
+        'status':          'Status: *(.+)',
+        'name_servers'     'Nameservers\n *([\n\S\s]+)'
+    }
+
+    def __init__(self, domain, text):
+        if 'No match for ' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
