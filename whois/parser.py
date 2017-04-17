@@ -502,20 +502,12 @@ class WhoisMe(WhoisEntry):
     """Whois parser for .me domains
     """
     regex = {
-        'domain_id':                   'Domain ID:(.+)',
+        'domain_id':                   'Registry Domain ID:(.+)',
         'domain_name':                 'Domain Name:(.+)',
-        'creation_date':               'Domain Create Date:(.+)',
-        'updated_date':                'Domain Last Updated Date:(.+)',
-        'expiration_date':             'Domain Expiration Date:(.+)',
-        'transfer_date':               'Last Transferred Date:(.+)',
-        'trademark_name':              'Trademark Name:(.+)',
-        'trademark_country':           'Trademark Country:(.+)',
-        'trademark_number':            'Trademark Number:(.+)',
-        'trademark_application_date':  'Date Trademark Applied For:(.+)',
-        'trademark_registration_date': 'Date Trademark Registered:(.+)',
-        'registrar':                   'Sponsoring Registrar:(.+)',
-        'created_by':                  'Created by:(.+)',
-        'updated_by':                  'Last Updated by Registrar:(.+)',
+        'creation_date':               'Creation Date:(.+)',
+        'updated_date':                'Updated Date:(.+)',
+        'expiration_date':             'Registry Expiry Date: :(.+)',
+        'registrar':                   'Registrar:(.+)',
         'status':                      'Domain Status:(.+)',  # list of statuses
         'registrant_id':               'Registrant ID:(.+)',
         'registrant_name':             'Registrant Name:(.+)',
