@@ -823,7 +823,9 @@ class WhoisDe(WhoisEntry):
         'city': 'City: *(.+)',
         'country_code': 'CountryCode: *(.+)',
         'phone': 'Phone: *(.+)',
-        'fax': 'Fax: *(.+)'
+        'fax': 'Fax: *(.+)',
+        'emails': EMAIL_REGEX  # list of email addresses
+
     }
 
     def __init__(self, domain, text):
