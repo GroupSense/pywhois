@@ -568,15 +568,15 @@ class WhoisUk(WhoisEntry):
     """Whois parser for .uk domains
     """
     regex = {
-        'domain_name':                    'Domain name:\n\s*(.+)',
-        'registrar':                      'Registrar:\n\s*(.+)',
-        'registrar_url':                  'URL: *(.+)',
-        'status':                         'Registration status:\n\s*(.+)',  # list of statuses
-        'registrant_name':                'Registrant:\n\s*(.+)',
-        'creation_date':                  'Registered on: *(.+)',
-        'expiration_date':                'Expiry date: *(.+)',
-        'updated_date':                   'Last updated: *(.+)',
-        'name_servers':                   'Name servers: *(.+)',
+        'domain_name':                    'Domain name:\s*(.+)',
+        'registrar':                      'Registrar:\s*(.+)',
+        'registrar_url':                  'URL:\s*(.+)',
+        'status':                         'Registration status:\s*(.+)',  # list of statuses
+        'registrant_name':                'Registrant:\s*(.+)',
+        'creation_date':                  'Registered on:\s*(.+)',
+        'expiration_date':                'Expiry date:\s*(.+)',
+        'updated_date':                   'Last updated:\s*(.+)',
+        'name_servers':                   'Name servers:\s*(.+)',
     }
 
     def __init__(self, domain, text):
