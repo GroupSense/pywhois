@@ -1186,7 +1186,7 @@ class WhoisDk(WhoisEntry):
         'expiration_date': 'Expires: *(.+)',
         'dnssec':          'Dnssec: *(.+)',
         'status':          'Status: *(.+)',
-        'name_servers'     'Nameservers\n *([\n\S\s]+)'
+        'name_servers':     'Nameservers\n *([\n\S\s]+)'
     }
 
     def __init__(self, domain, text):
