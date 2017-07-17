@@ -253,6 +253,8 @@ class WhoisEntry(dict):
             return WhoisIs(domain, text)
         elif domain.endswith('.dk'):
             return WhoisDk(domain, text)
+        elif domain.endswith('.it'):
+            return WhoisIt(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1149,6 +1151,23 @@ class WhoisSe(WhoisEntry):
         'dnssec':                         'dnssec\.*: *(.+)',
         'status':                         'status\.*: *(.+)',  # list of statuses
         'registrar':                      'registrar: *(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'not found.' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+class WhoisIt(WhoisEntry):
+    """Whois parser for .it domains
+    """
+    regex = {
+        'domain_name':                    'Domain: *(.+)',
+        'creation_date':                  '(?<! )Created: *(.+)',
+        'updated_date':                   '(?<! )Last Update: *(.+)',
+        'expiration_date':                '(?<! )Expire Date: *(.+)',
+        'status':                         'Status: *(.+)',  # list of statuses
     }
 
     def __init__(self, domain, text):
