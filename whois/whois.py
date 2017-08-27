@@ -126,7 +126,7 @@ class NICClient(object):
             print('Socket Error:', socketerror)
 
         nhost = None
-        response = response.decode('utf-8', errors='replace')
+        response = response.decode('utf-8', 'replace')
         if 'with "=xxx"' in response:
             return self.whois(query, hostname, flags, True)
         if flags & NICClient.WHOIS_RECURSE and nhost is None:
