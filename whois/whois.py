@@ -59,6 +59,7 @@ class NICClient(object):
     IANAHOST = "whois.iana.org"
     PANDIHOST = "whois.pandi.or.id"
     DENICHOST = "de.whois-servers.net"
+    AI_HOST = "whois.ai"
     DEFAULT_PORT = "nicname"
 
     WHOIS_RECURSE = 0x01
@@ -152,7 +153,10 @@ class NICClient(object):
         tld = domain[-1]
         if tld[0].isdigit():
             return NICClient.ANICHOST
-        return tld + NICClient.QNICHOST_TAIL
+        elif tld == 'ai':
+            return NICClient.AI_HOST
+        else:
+            return tld + NICClient.QNICHOST_TAIL
 
     def whois_lookup(self, options, query_arg, flags):
         """Main entry point: Perform initial lookup on TLD whois server,

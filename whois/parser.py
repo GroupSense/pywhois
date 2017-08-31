@@ -256,6 +256,8 @@ class WhoisEntry(dict):
             return WhoisDk(domain, text)
         elif domain.endswith('.it'):
             return WhoisIt(domain, text)
+        elif domain.endswith('.ai'):
+            return WhoisAi(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1213,6 +1215,27 @@ class WhoisDk(WhoisEntry):
 
     def __init__(self, domain, text):
         if 'No match for ' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+class WhoisAi(WhoisEntry):
+    """Whois parser for .ai domains
+    """
+    regex = {
+        'domain_name':      'Complete Domain Name\.*: *(.+)',
+        'name':             'Name \(Last, First\)\.*: *(.+)',
+        'org':              'Organization Name\.*: *(.+)',
+        'address':          'Street Address\.*: *(.+)',
+        'city':             'City\.*: *(.+)',
+        'state':            'State\.*: *(.+)',
+        'zipcode':          'Postal Code\.*: *(\d+)',
+        'country':          'Country\.*: *(.+)',
+        'name_servers':     'Server Hostname\.*: *(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'not registered' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
