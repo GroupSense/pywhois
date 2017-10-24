@@ -130,13 +130,7 @@ class WhoisEntry(dict):
                 for data in re.findall(regex, self.text, re.IGNORECASE):
                     matches = data if isinstance(data, tuple) else [data]
                     for value in matches:
-                        value = value.strip()
-                        if value and isinstance(value, basestring) and not value.isdigit() and '_date' in attr:
-                            # try casting to date format
-                            value = cast_date(
-                                value,
-                                dayfirst=self.dayfirst,
-                                yearfirst=self.yearfirst)
+                        value = self._preprocess(attr, value)
                         if value and value not in values:
                             # avoid duplicates
                             values.append(value)
@@ -149,6 +143,15 @@ class WhoisEntry(dict):
 
                 self[attr] = values
 
+    def _preprocess(self, attr, value):
+        value = value.strip()
+        if value and isinstance(value, basestring) and not value.isdigit() and '_date' in attr:
+            # try casting to date format
+            value = cast_date(
+                value,
+                dayfirst=self.dayfirst,
+                yearfirst=self.yearfirst)
+        return value
 
     def __setitem__(self, name, value):
         super(WhoisEntry, self).__setitem__(name, value)
@@ -258,6 +261,8 @@ class WhoisEntry(dict):
             return WhoisIt(domain, text)
         elif domain.endswith('.ai'):
             return WhoisAi(domain, text)
+        elif domain.endswith('.il'):
+            return WhoisIl(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1239,3 +1244,33 @@ class WhoisAi(WhoisEntry):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
+
+class WhoisIl(WhoisEntry):
+    """Whois parser for .il domains
+    """
+    regex = {
+        'domain_name':     'domain: *(.+)',
+        'expiration_date': 'validity: *(.+)',
+        'registrant_name': 'person: *(.+)',
+        'dnssec':          'DNSSEC: *(.+)',
+        'status':          'status: *(.+)',
+        'name_servers':    'nserver: *(.+)',
+        'emails':          'e-mail: *(.+)',
+        'phone':           'phone: *(.+)',
+        'name_servers':    'nserver: *(.+)',
+        'registrar':       'registrar name: *(.+)',
+        'referral_url':    'registrar info: *(.+)',
+    }
+
+    dayfirst = True
+
+    def __init__(self, domain, text):
+        if 'No data was found' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+    def _preprocess(self, attr, value):
+        if attr == 'emails':
+            value = value.replace(' AT ', '@')
+        return super(WhoisIl, self)._preprocess(attr, value)
