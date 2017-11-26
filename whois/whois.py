@@ -115,7 +115,7 @@ class NICClient(object):
                 query_bytes = '=' + query
             else:
                 query_bytes = query
-            s.send((query_bytes) + b"\r\n")
+            s.send(bytes(query_bytes,'utf-8') + b"\r\n")
             # recv returns bytes
             while True:
                 d = s.recv(4096)
@@ -141,6 +141,8 @@ class NICClient(object):
         try:
             domain = domain.encode('idna').decode('utf-8')
         except TypeError:
+            domain = domain.decode('utf-8').encode('idna').decode('utf-8')
+        except AttributeError:
             domain = domain.decode('utf-8').encode('idna').decode('utf-8')
         if domain.endswith("-NORID"):
             return NICClient.NORIDHOST

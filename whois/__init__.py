@@ -73,7 +73,7 @@ def extract_domain(url):
     if not suffixes:
         # downloaded from https://publicsuffix.org/list/public_suffix_list.dat
         tlds_path = os.path.join(os.getcwd(), os.path.dirname(__file__), 'data', 'public_suffix_list.dat')
-        with open(tlds_path) as tlds_fp:
+        with open(tlds_path, encoding='utf-8') as tlds_fp:
             suffixes = set(line.encode('utf-8') for line in tlds_fp.read().splitlines() if line and not line.startswith('//'))
 
     if not isinstance(url, str):
@@ -85,7 +85,7 @@ def extract_domain(url):
     domain = b''
     for section in reversed(url.split(b'.')):
         if domain:
-            domain = '.' + domain
+            domain = b'.' + domain
         domain = section + domain
         if domain not in suffixes:
             break
