@@ -263,6 +263,8 @@ class WhoisEntry(dict):
             return WhoisAi(domain, text)
         elif domain.endswith('.il'):
             return WhoisIl(domain, text)
+        elif domain.endswith('.in'):
+            return WhoisIn(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1274,3 +1276,23 @@ class WhoisIl(WhoisEntry):
         if attr == 'emails':
             value = value.replace(' AT ', '@')
         return super(WhoisIl, self)._preprocess(attr, value)
+
+class WhoisIn(WhoisEntry):
+    """Whois parser for .in domains
+    """
+    regex = {
+        'domain_name':      'Domain Name: *(.+)',
+        'registrar':        'Registrar: *(.+)',
+        'updated_date':     'Last Updated On: *(.+)',
+        'creation_date':    'Created On: *(.+)',
+        'expiration_date':  'Expiration Date: *(.+)',
+        'name_servers':     'Name Server: *(.+)',
+        'status':           'Status: *(.+)',
+        'emails':           EMAIL_REGEX,
+    }
+
+    def __init__(self, domain, text):
+        if 'No entries found' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
