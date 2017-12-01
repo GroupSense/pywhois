@@ -79,17 +79,17 @@ def extract_domain(url):
     if not isinstance(url, str):
         url = url.decode('utf-8')
     url = re.sub('^.*://', '', url)
-    url = url.split('/')[0].lower().encode('idna')
+    url = url.split('/')[0].lower()
 
     # find the longest suffix match
     domain = b''
-    for section in reversed(url.split(b'.')):
+    for section in reversed(url.split('.')):
         if domain:
             domain = b'.' + domain
-        domain = section + domain
+        domain = section.encode('utf-8') + domain
         if domain not in suffixes:
             break
-    return domain.decode('idna')
+    return domain.decode('utf-8')
 
 
 if __name__ == '__main__':
