@@ -39,51 +39,38 @@ Install from pypi:
 
 .. sourcecode:: bash
 
-    pip install python-whois
+    $ pip install python-whois
 
 Or checkout latest version from repository:
 
 .. sourcecode:: bash
 
-    hg clone https://bitbucket.org/richardpenman/pywhois
+    $ hg clone https://bitbucket.org/richardpenman/pywhois
 
 Note that then you will need to manually install the futures module, which allows supporting both Python 2 & 3:
 
 
 .. sourcecode:: bash
 
-    pip install futures
+    $ pip install futures
 
+Run test cases for python 2 & 3:
 
+.. sourcecode:: bash
 
-
-Changelog
-=========
-
-0.6 - 2016-03-02:
-
-* support added for python 3
-* updated TLD list
-
-0.5 - 2015-09-05:
-
-* added native client, which now handles whois requests by default
-* added pretty formatting to string representation
-* return None instead of raising KeyError when an attribute does not exist
-* new TLD's: .mobi, .io, .kg, .su, .biz
-
-0.4 - 2015-08-13:
-
-* new TLD's: .de, .nl, .ca, .be
-* migrated to bitbucket
-* added socket timeout
-
-0.3 - 2015-03-31:
-
-* improved datetime parsing with python-dateutil when available
-* base WhoisEntry class inherits from dict
-* fixed TLD's: .org, .info
-
+    $ python -m unittest discover test
+    .............
+    ----------------------------------------------------------------------
+    Ran 13 tests in 0.812s
+    
+    OK
+    
+    $ python3 -m unittest discover test
+    .............
+    ----------------------------------------------------------------------
+    Ran 13 tests in 1.431s
+    
+    OK
 
 
 Problems?
