@@ -1315,7 +1315,7 @@ class WhoisCat(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if 'NOT FOUND' in text:
+        if 'no matching objects' in text:
             raise PywhoisError(text)
         else:
             # Merge base class regex with specifics
