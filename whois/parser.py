@@ -266,6 +266,8 @@ class WhoisEntry(dict):
             return WhoisIl(domain, text)
         elif domain.endswith('.in'):
             return WhoisIn(domain, text)
+        elif domain.endswith('.cat'):
+            return WhoisCat(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1296,4 +1298,27 @@ class WhoisIn(WhoisEntry):
         if 'NOT FOUND' in text:
             raise PywhoisError(text)
         else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+class WhoisCat(WhoisEntry):
+    """Whois parser for .cat domains
+    """
+    regex = {
+        'domain_name':      'Domain Name: *(.+)',
+        'registrar':        'Registrar: *(.+)',
+        'updated_date':     'Updated Date: *(.+)',
+        'creation_date':    'Creation Date: *(.+)',
+        'expiration_date':  'Registry Expiry Date: *(.+)',
+        'name_servers':     'Name Server: *(.+)',
+        'status':           'Domain status: *(.+)',
+        'emails':           EMAIL_REGEX,
+    }
+
+    def __init__(self, domain, text):
+        if 'NOT FOUND' in text:
+            raise PywhoisError(text)
+        else:
+            # Merge base class regex with specifics
+            self._regex.update(self.regex)
+            self.regex = self._regex
             WhoisEntry.__init__(self, domain, text, self.regex)
