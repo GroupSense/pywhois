@@ -53,7 +53,9 @@ class TestParser(unittest.TestCase):
                         'creation_date', 'status']
         fail = 0
         total = 0
-        for path in glob('test/samples/whois/*.com'):
+        whois_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'samples','whois','*')
+        expect_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'samples','expected')
+        for path in glob(whois_path):
             # Parse whois data
             domain = os.path.basename(path)
             with open(path) as whois_fp:
@@ -72,14 +74,14 @@ class TestParser(unittest.TestCase):
                         return str(obj)
                     raise TypeError(
                             '{} is not JSON serializable'.format(repr(obj)))
-                outfile_name = os.path.join('test/samples/expected/', domain)
+                outfile_name = os.path.join(expect_path, domain)
                 with open(outfile_name, 'w') as outfil:
                     expected_results = json.dump(results, outfil,
                                                        default=date2str4json)
                 continue
 
             # Load expected result
-            with open(os.path.join('test/samples/expected/', domain)) as infil:
+            with open(os.path.join(expect_path, domain)) as infil:
                 expected_results = json.load(infil)
 
             # Compare each key
