@@ -324,6 +324,7 @@ class WhoisRu(WhoisEntry):
         'registrar': 'registrar: *(.+)',
         'creation_date': 'created: *(.+)',
         'expiration_date': 'paid-till: *(.+)',
+        'updated_date': None,
         'name_servers': 'nserver: *(.+)',  # list of name servers
         'status': 'state: *(.+)',  # list of statuses
         'emails': EMAIL_REGEX,  # list of email addresses
@@ -341,6 +342,11 @@ class WhoisNl(WhoisEntry):
     """Whois parser for .nl domains
     """
     regex = {
+        'domain_name': 'Domain Name: *(.+)',
+        'expiration_date': None,
+        'updated_date': None,
+        'creation_date': None,
+        'status': 'Status: *(.+)',  # list of statuses
         'name': None,
         'address': None,
         'zip_code': None,
