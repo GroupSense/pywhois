@@ -370,7 +370,6 @@ class WhoisNl(WhoisEntry):
             self['country'] = lines[-1]
 
 
-
 class WhoisName(WhoisEntry):
     """Whois parser for .name domains
     """
@@ -463,9 +462,9 @@ class WhoisUs(WhoisEntry):
         'name_servers':                   'Name Server: *(.+)',  # list of name servers
         'created_by_registrar':           'Created by Registrar: *(.+)',
         'last_updated_by_registrar':      'Last Updated by Registrar: *(.+)',
-        'creation_date':                  'Domain Registration Date: *(.+)',
-        'expiration_date':                'Domain Expiration Date: *(.+)',
-        'updated_date':                   'Domain Last Updated Date: *(.+)',
+        'creation_date':                  'Creation Date: *(.+)',
+        'expiration_date':                'Registry Expiry Date: *(.+)',
+        'updated_date':                   'Updated Date: *(.+)',
     }
 
     def __init__(self, domain, text):
@@ -1326,6 +1325,6 @@ class WhoisCat(WhoisEntry):
             raise PywhoisError(text)
         else:
             # Merge base class regex with specifics
-            self._regex.update(self.regex)
+            self._regex.copy().update(self.regex)
             self.regex = self._regex
             WhoisEntry.__init__(self, domain, text, self.regex)
