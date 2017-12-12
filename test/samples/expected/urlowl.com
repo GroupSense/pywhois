@@ -1,1 +1,1 @@
-{"domain_name": ["URLOWL.COM", "urlowl.com"], "expiration_date": "2009-04-14 00:00:00", "updated_date": "2008-04-14 00:00:00", "status": "ok", "creation_date": "2008-04-14 00:00:00"}
+{"domain_name": "URLOWL.COM", "expiration_date": "2018-02-21 19:24:57", "updated_date": "2017-03-31 07:36:34", "status": "clientTransferProhibited https://icann.org/epp#clientTransferProhibited", "creation_date": "2013-02-21 19:24:57"}
