@@ -25,15 +25,15 @@ class TestParser(unittest.TestCase):
     def test_com_expiration(self):
         data = """
         Status: ok
-        Updated Date: 14-apr-2008
-        Creation Date: 14-apr-2008
-        Expiration Date: 14-apr-2009
+        Updated Date: 2017-03-31T07:36:34Z
+        Creation Date: 2013-02-21T19:24:57Z
+        Registry Expiry Date: 2018-02-21T19:24:57Z
 
         >>> Last update of whois database: Sun, 31 Aug 2008 00:18:23 UTC <<<
         """
         w = WhoisEntry.load('urlowl.com', data)
         expires = w.expiration_date.strftime('%Y-%m-%d')
-        self.assertEqual(expires, '2009-04-14')
+        self.assertEqual(expires, '2018-02-21')
 
     def test_cast_date(self):
         dates = ['14-apr-2008', '2008-04-14']
@@ -88,6 +88,8 @@ class TestParser(unittest.TestCase):
             for key in results:
                 total += 1
                 result = results.get(key)
+                if isinstance(result, list):
+                    result = [str(element) for element in result]
                 if isinstance(result, datetime.datetime):
                     result = str(result)
                 expected = expected_results.get(key)
