@@ -819,6 +819,8 @@ class WhoisBg(WhoisEntry):
     """Whois parser for .bg domains
     """
     regex = {
+        'domain_name': 'DOMAIN NAME: *(.+)\n',
+        'status': 'registration status: s*(.+)',
         'expiration_date': 'expires at: *(.+)',
     }
 
@@ -835,6 +837,8 @@ class WhoisDe(WhoisEntry):
     """Whois parser for .de domains
     """
     regex = {
+        'domain_name': 'Domain: *(.+)',
+        'status': 'Status: *(.+)',
         'name': 'name: *(.+)',
         'org': 'Organisation: *(.+)',
         'address': 'Address: *(.+)',
@@ -857,6 +861,7 @@ class WhoisAt(WhoisEntry):
     """Whois parser for .at domains
     """
     regex = {
+        'domain_name': 'domain: *(.+)',
         'name': 'personname: *(.+)',
         'org': 'organization: *(.+)',
         'address': 'street address: *(.+)',
