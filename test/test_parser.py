@@ -236,6 +236,64 @@ class TestParser(unittest.TestCase):
         }
         self._parse_and_compare('python.org.il', data, expected_results)
 
+    def test_ie_parse(self):
+        data = """
+        domain:       rte.ie
+        descr:        RTE Commercial Enterprises Limited
+        descr:        Body Corporate (Ltd,PLC,Company)
+        descr:        Corporate Name
+        admin-c:      AWB910-IEDR
+        admin-c:      JM474-IEDR
+        tech-c:       JM474-IEDR
+        registration: 11-February-2000
+        renewal:      31-March-2024
+        holder-type:  Billable
+        locked:       NO
+        ren-status:   Active
+        in-zone:      1
+        nserver:      ns1.rte.ie 162.159.0.73 2400:cb00:2049:1::a29f:49
+        nserver:      ns2.rte.ie 162.159.1.73 2400:cb00:2049:1::a29f:149
+        nserver:      ns3.rte.ie 162.159.2.27 2400:cb00:2049:1::a29f:21b
+        nserver:      ns4.rte.ie 162.159.3.18 2400:cb00:2049:1::a29f:312
+        source:       IEDR
+
+        person:       Michael Kennedy
+        nic-hdl:      AWB910-IEDR
+        source:       IEDR
+
+        person:       John Moylan
+        nic-hdl:      JM474-IEDR
+        source:       IEDR
+
+        person:       John Moylan
+        nic-hdl:      JM474-IEDR
+        source:       IEDR"""
+
+        expected_results = {
+            "domain_name": "rte.ie",
+            "description": [
+                "RTE Commercial Enterprises Limited",
+                "Body Corporate (Ltd,PLC,Company)",
+                "Corporate Name"
+            ],
+            "source": "IEDR",
+            "creation_date": "2000-02-11 00:00:00",
+            "expiration_date": "2024-03-31 00:00:00",
+            "name_servers": [
+                "ns1.rte.ie 162.159.0.73 2400:cb00:2049:1::a29f:49",
+                "ns2.rte.ie 162.159.1.73 2400:cb00:2049:1::a29f:149",
+                "ns3.rte.ie 162.159.2.27 2400:cb00:2049:1::a29f:21b",
+                "ns4.rte.ie 162.159.3.18 2400:cb00:2049:1::a29f:312"
+            ],
+            "status": "Active",
+            "admin_id": [
+                "AWB910-IEDR",
+                "JM474-IEDR"
+            ],
+            "tech_id": "JM474-IEDR"
+        }
+        self._parse_and_compare('rte.ie', data, expected_results)
+
     def _parse_and_compare(self, domain_name, data, expected_results):
         results = WhoisEntry.load(domain_name, data)
         fail = 0
