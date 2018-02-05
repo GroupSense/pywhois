@@ -271,6 +271,8 @@ class WhoisEntry(dict):
             return WhoisCat(domain, text)
         elif domain.endswith('.ie'):
             return WhoisIe(domain, text)
+        elif domain.endswith('.nz'):
+            return WhoisNz(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1350,6 +1352,32 @@ class WhoisIe(WhoisEntry):
         'status':           'ren-status: *(.+)',
         'admin_id':         'admin-c: *(.+)',
         'tech_id':          'tech-c: *(.+)'
+    }
+
+    def __init__(self, domain, text):
+        if 'no matching objects' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisNz(WhoisEntry):
+    """Whois parser for .nz domains
+    """
+    regex = {
+        'domain_name':          'domain_name:\s*([^\n\r]+)',
+        'registrar':            'registrar_name:\s*([^\n\r]+)',
+        'updated_date':         'domain_datelastmodified:\s*([^\n\r]+)',
+        'creation_date':        'domain_dateregistered:\s*([^\n\r]+)',
+        'expiration_date':      'domain_datebilleduntil:\s*([^\n\r]+)',
+        'name_servers':         'ns_name_\d*:\s*([^\n\r]+)',  # list of name servers
+        'status':               'status:\s*([^\n\r]+)',  # list of statuses
+        'emails':               EMAIL_REGEX,  # list of email s
+        'name':                 'registrant_contact_name:\s*([^\n\r]+)',
+        'address':              'registrant_contact_address\d*:\s*([^\n\r]+)',
+        'city':                 'registrant_contact_city:\s*([^\n\r]+)',
+        'zipcode':              'registrant_contact_postalcode:\s*([^\n\r]+)',
+        'country':              'registrant_contact_country:\s*([^\n\r]+)',
     }
 
     def __init__(self, domain, text):
