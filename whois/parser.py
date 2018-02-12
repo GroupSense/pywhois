@@ -281,7 +281,7 @@ class WhoisEntry(dict):
 
 
 class WhoisSpace(WhoisEntry):
-    """Whois parser for .com domains
+    """Whois parser for .space domains
     """
     def __init__(self, domain, text):
         if 'No match for "' in text:
