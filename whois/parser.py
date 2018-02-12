@@ -274,8 +274,20 @@ class WhoisEntry(dict):
             return WhoisIe(domain, text)
         elif domain.endswith('.nz'):
             return WhoisNz(domain, text)
+        elif domain.endswith('.space'):
+            return WhoisSpace(domain, text)
         else:
             return WhoisEntry(domain, text)
+
+
+class WhoisSpace(WhoisEntry):
+    """Whois parser for .com domains
+    """
+    def __init__(self, domain, text):
+        if 'No match for "' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text)
 
 
 class WhoisCom(WhoisEntry):
