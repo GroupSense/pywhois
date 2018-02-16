@@ -85,7 +85,10 @@ class TestParser(unittest.TestCase):
                 expected_results = json.load(infil)
 
             # Compare each key
-            for key in set(results).union(set(expected_results)):
+            compare_keys = set.union(set(results), set(expected_results))
+            if keys_to_test is not None:
+                compare_keys = compare_keys.intersection(set(keys_to_test))
+            for key in compare_keys:
                 total += 1
                 if key not in results:
                     print("%s \t(%s):\t Missing in results" % (domain, key,))
