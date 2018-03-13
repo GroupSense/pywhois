@@ -627,6 +627,8 @@ class WhoisUk(WhoisEntry):
 class WhoisFr(WhoisEntry):
     """Whois parser for .fr domains
     """
+    dayfirst = True
+
     regex = {
         'domain_name': 'domain: *(.+)',
         'registrar': 'registrar: *(.+)',
@@ -840,7 +842,6 @@ class WhoisBg(WhoisEntry):
         'status': 'registration status: s*(.+)',
         'expiration_date': 'expires at: *(.+)',
     }
-
     dayfirst = True
 
     def __init__(self, domain, text):
@@ -1294,7 +1295,6 @@ class WhoisIl(WhoisEntry):
         'registrar':       'registrar name: *(.+)',
         'referral_url':    'registrar info: *(.+)',
     }
-
     dayfirst = True
 
     def __init__(self, domain, text):
