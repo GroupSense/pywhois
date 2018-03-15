@@ -544,7 +544,7 @@ class WhoisMe(WhoisEntry):
         'domain_name':                 'Domain Name:(.+)',
         'creation_date':               'Creation Date:(.+)',
         'updated_date':                'Updated Date:(.+)',
-        'expiration_date':             'Registry Expiry Date: :(.+)',
+        'expiration_date':             'Registry Expiry Date: (.+)',
         'registrar':                   'Registrar:(.+)',
         'status':                      'Domain Status:(.+)',  # list of statuses
         'registrant_id':               'Registrant ID:(.+)',
