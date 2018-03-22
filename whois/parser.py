@@ -276,7 +276,7 @@ class WhoisEntry(dict):
             return WhoisNz(domain, text)
         elif domain.endswith('.space'):
             return WhoisSpace(domain, text)
-        elif domain.endwith('.lu'):
+        elif domain.endswith('.lu'):
             return WhoisLu(domain, text)
         else:
             return WhoisEntry(domain, text)
