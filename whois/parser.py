@@ -276,6 +276,8 @@ class WhoisEntry(dict):
             return WhoisNz(domain, text)
         elif domain.endswith('.space'):
             return WhoisSpace(domain, text)
+        elif domain.endwith('.lu'):
+            return WhoisLu(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1398,3 +1400,39 @@ class WhoisNz(WhoisEntry):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisLu(WhoisEntry):
+    """Whois parser for .lu domains
+    """
+    regex = {
+        'domain_name':              'domainname: *(.+)',
+        'creation_date':            'registered: *(.+)',
+        'name_servers':             'nserver: *(.+)',
+        'status':                   'domaintype: *(.+)',
+        'registrar':                'registrar-name: *(.+)',
+        'registrant_name':          'org-name: *(.+)',
+        'registrant_address':       'org-address: *(.+)',
+        'registrant_postal_code':   'org-zipcode:*(.+)',
+        'registrant_city':          'org-city: *(.+)',
+        'registrant_country':       'org-country: *(.+)',
+        'admin_name':               'adm-name: *(.+)',
+        'admin_address':            'adm-address: *(.+)',
+        'admin_postal_code':        'adm-zipcode: *(.+)',
+        'admin_city':               'adm-city: *(.+)',
+        'admin_country':            'adm-country: *(.+)',
+        'admin_email':              'adm-email: *(.+)',
+        'tech_name':                'tec-name: *(.+)',
+        'tech_address':             'tec-address: *(.+)',
+        'tech_postal_code':         'tec-zipcode: *(.+)',
+        'tech_city':                'tec-city: *(.+)',
+        'tech_country':             'tec-country: *(.+)',
+        'tech_email':               'tec-email: *(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if 'No such domain' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
