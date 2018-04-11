@@ -723,7 +723,7 @@ class WhoisEu(WhoisEntry):
         'tech_fax': r'Technical: *Name: *[^\n\r]+\s*Organisation: *[^\n\r]+\s*Language: *[^\n\r]+\s*Phone: *[^\n\r]+\s*Fax: *([^\n\r]+)',
         'tech_email': r'Technical: *Name: *[^\n\r]+\s*Organisation: *[^\n\r]+\s*Language: *[^\n\r]+\s*Phone: *[^\n\r]+\s*Fax: *[^\n\r]+\s*Email: *([^\n\r]+)',
         'registrar': r'Registrar: *Name: *([^\n\r]+)',
-        'name_servers': r'Name servers: *([^\n\r]+)\s*([^\n\r]*)',  # list of name servers
+        'name_servers': r'Name servers:\s*(.+)',  # list of name servers
     }
 
     def __init__(self, domain, text):
