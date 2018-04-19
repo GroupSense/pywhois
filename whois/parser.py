@@ -52,6 +52,7 @@ KNOWN_FORMATS = [
     '%d/%m/%Y %H:%M:%S %Z',     # 23/04/2015 12:00:07 EEST
     '%d/%m/%Y %H:%M:%S.%f %Z',  # 23/04/2015 12:00:07.619546 EEST
     '%B %d %Y',                 # August 14 2017
+    '%d.%m.%Y %H:%M:%S',        # 08.03.2014 10:28:24
 ]
 
 
@@ -278,6 +279,8 @@ class WhoisEntry(dict):
             return WhoisSpace(domain, text)
         elif domain.endswith('.lu'):
             return WhoisLu(domain, text)
+        elif domain.endswith('.cz'):
+            return WhoisCz(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1432,6 +1435,26 @@ class WhoisLu(WhoisEntry):
 
     def __init__(self, domain, text):
         if 'No such domain' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisCz(WhoisEntry):
+    """Whois parser for .cz domains
+    """
+    regex = {
+        'domain_name':              'domain: *(.+)',
+        'registrant_name':          'registrant: *(.+)',
+        'registrar':                'registrar: *(.+)',
+        'creation_date':            'registered: *(.+)',
+        'updated_date':             'changed: *(.+)',
+        'expiration_date':          'expire: *(.+)',
+        'name_servers':             'nserver: *(.+)',
+    }
+
+    def __init__(self, domain, text):
+        if '% No entries found.' in text:
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
