@@ -72,6 +72,15 @@ Run test cases for python 2 & 3:
     
     OK
 
+SOCKS Proxy support requirements:
+
+.. sourcecode:: bash
+
+    $ pip install PySocks
+    ............
+    ---------------------------------------------------------------------
+    $ export SOCKS=socksproxy.someplace.com:8080
+
 
 Problems?
 =========
