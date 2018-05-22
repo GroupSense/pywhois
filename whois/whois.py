@@ -100,11 +100,10 @@ class NICClient(object):
         if "SOCKS" in os.environ:
              try:
                   import socks
-             except Exception as e:
-                  print(str(e))
-                  print("You need to install the Python socks module.  Install PIP (https://bootstrap.pypa.io/get-pip.py).  Then 'pip install PySocks' ")
-                  sys.exit(0)
-             socksproxy,port = os.environ["SOCKS"].split(":")
+             except ImportError as e:
+                  print("You need to install the Python socks module. Install PIP (https://bootstrap.pypa.io/get-pip.py) and then 'pip install PySocks'")
+                  raise e
+             socksproxy, port = os.environ["SOCKS"].split(":")
              s = socks.socksocket()
              s.set_proxy(socks.SOCKS5, socksproxy, int(port))
         else:
