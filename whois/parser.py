@@ -281,6 +281,8 @@ class WhoisEntry(dict):
             return WhoisLu(domain, text)
         elif domain.endswith('.cz'):
             return WhoisCz(domain, text)
+        elif domain.endswith('.online'):
+            return WhoisOnline(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -1459,3 +1461,31 @@ class WhoisCz(WhoisEntry):
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
 
+
+class WhoisOnline(WhoisEntry):
+    """Whois parser for .online domains
+    """
+    regex = {
+        'domain_name':                    'Domain Name: *(.+)',
+        'domain__id':                     'Domain ID: *(.+)',
+        'whois_server':                   'Registrar WHOIS Server: *(.+)',
+        'registrar':                      'Registrar: *(.+)',
+        'registrar_id':                   'Registrar IANA ID: *(.+)',
+        'registrar_url':                  'Registrar URL: *(.+)',
+        'status':                         'Domain Status: *(.+)',
+        'registrant_email':               'Registrant Email: *(.+)',
+        'admin_email':                    'Admin Email: *(.+)',
+        'billing_email':                  'Billing Email: *(.+)',
+        'tech_email':                     'Tech Email: *(.+)',
+        'name_servers':                   'Name Server: *(.+)',
+        'creation_date':                  'Creation Date: *(.+)',
+        'expiration_date':                'Registry Expiry Date: *(.+)',
+        'updated_date':                   'Updated Date: *(.+)',
+        'dnssec':                         'DNSSEC: *([\S]+)'
+    }
+
+    def __init__(self, domain, text):
+        if 'Not found:' in text:
+            raise PywhoisError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text, self.regex)
