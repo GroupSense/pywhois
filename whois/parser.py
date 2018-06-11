@@ -1050,13 +1050,19 @@ class WhoisIo(WhoisEntry):
     """Whois parser for .io domains
     """
     regex = {
-        'status':           'Status\s*: *(.+)',
-        'name_servers':     'NS \d?\s*: *(.+)',
-        #'owner':            'Owner\s*: *(.+)',
-        'owner':            'Owner OrgName\s*: *(.+)',
-        'expiration_date':  'Expiry\s*: *(.+)',
-        'domain_name':      'Domain\s*: *(.+)',
-        'registrar':        r'Check for \'[\w\.]*\' --- (.+)',
+        'domain_name':                    'Domain Name: *(.+)',
+        'domain__id':                     'Registry Domain ID: *(.+)',
+        'registrar':                      'Registrar: *(.+)',
+        'registrar_id':                   'Registrar IANA ID: *(.+)',
+        'registrar_url':                  'Registrar URL: *(.+)',
+        'status':                         'Domain Status: *(.+)',
+        'registrant_name':                'Registrant Organization: *(.+)',
+        'registrant_state_province':      'Registrant State/Province: *(.+)',
+        'registrant_country':             'Registrant Country: *(.+)',
+        'name_servers':                   'Name Server: *(.+)',
+        'creation_date':                  'Creation Date: *(.+)',
+        'expiration_date':                'Registry Expiry Date: *(.+)',
+        'updated_date':                   'Updated Date: *(.+)',
     }
 
     def __init__(self, domain, text):
@@ -1481,7 +1487,7 @@ class WhoisOnline(WhoisEntry):
         'creation_date':                  'Creation Date: *(.+)',
         'expiration_date':                'Registry Expiry Date: *(.+)',
         'updated_date':                   'Updated Date: *(.+)',
-        'dnssec':                         'DNSSEC: *([\S]+)'
+        'dnssec':                         'DNSSEC: *([\S]+)',
     }
 
     def __init__(self, domain, text):
