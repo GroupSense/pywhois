@@ -16,7 +16,7 @@ from builtins import *
 from builtins import str
 from past.builtins import basestring
 
-from .exceptions import PywhoisError, DomainNotFoundError, NoWhoisServerError
+from .exceptions import PywhoisError, DomainNotFoundError, WhoisServerNotFoundError
 
 import json
 from datetime import datetime
@@ -116,7 +116,7 @@ class WhoisEntry(dict):
 
     def __init__(self, domain, text, regex=None):
         if 'This TLD has no whois server, but you can access the whois database at' in text:
-            raise NoWhoisServerError(text)
+            raise WhoisServerNotFoundError(text)
         else:
             self.domain = domain
             self.text = text
