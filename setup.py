@@ -1,7 +1,6 @@
-import sys, os
 import setuptools
 
-version = '0.7.0'
+version = '0.8.0'
 
 setuptools.setup(
     name='python-whois',
@@ -27,7 +26,7 @@ setuptools.setup(
     url='https://bitbucket.org/richardpenman/pywhois',
     license='MIT',
     packages=['whois'],
-    package_dir={'whois':'whois'},
+    package_dir={'whois': 'whois'},
     extras_require={
         'better date conversion': ["python-dateutil"]
     },
