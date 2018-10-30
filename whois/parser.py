@@ -489,7 +489,7 @@ class WhoisUs(WhoisEntry):
     }
 
     def __init__(self, domain, text):
-        if ('Not found:' in text) or ('No data found:' in text):
+        if ('not found:' in text.lower()) or ('no data found' in text.lower()):
             raise DomainNotFoundError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
