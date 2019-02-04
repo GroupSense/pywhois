@@ -110,6 +110,12 @@ class WhoisEntry(dict):
         'state': 'Registrant State/Province: *(.+)',
         'zipcode': 'Registrant Postal Code: *(.+)',
         'country': 'Registrant Country: *(.+)',
+        'tech_name': 'Tech Name: *(.+)',
+        'tech_org': 'Tech Organization: *(.+)',
+        'tech_email': 'Tech Email: *(.+)',
+        'admin_name': 'Admin Name: *(.+)',
+        'admin_org': 'Tech Organization: *(.+)',
+        'admin_email': 'Admin Email: *(.+)'
     }
     dayfirst = False
     yearfirst = False
