@@ -110,6 +110,12 @@ class WhoisEntry(dict):
         'state': 'Registrant State/Province: *(.+)',
         'zipcode': 'Registrant Postal Code: *(.+)',
         'country': 'Registrant Country: *(.+)',
+        'tech_name': 'Tech Name: *(.+)',
+        'tech_org': 'Tech Organization: *(.+)',
+        'tech_email': 'Tech Email: *(.+)',
+        'admin_name': 'Admin Name: *(.+)',
+        'admin_org': 'Tech Organization: *(.+)',
+        'admin_email': 'Admin Email: *(.+)'
     }
     dayfirst = False
     yearfirst = False
@@ -272,7 +278,7 @@ class WhoisEntry(dict):
             return WhoisIe(domain, text)
         elif domain.endswith('.nz'):
             return WhoisNz(domain, text)
-        elif domain.endswith('.space'):
+        elif domain.endswith('.space') or domain.endswith('.bz'):
             return WhoisSpace(domain, text)
         elif domain.endswith('.lu'):
             return WhoisLu(domain, text)
@@ -280,6 +286,8 @@ class WhoisEntry(dict):
             return WhoisCz(domain, text)
         elif domain.endswith('.online'):
             return WhoisOnline(domain, text)
+        elif domain.endswith('.site') or domain.endswith('.website'):
+            return WhoisIANA(domain, text)
         else:
             return WhoisEntry(domain, text)
 
@@ -287,11 +295,27 @@ class WhoisEntry(dict):
 class WhoisSpace(WhoisEntry):
     """Whois parser for .space domains
     """
+    regex = {
+        'whois_server': 'whois: *(.+)',
+        'updated_date': 'changed: *(.+)',
+        'creation_date': 'created: *(.+)',
+        'name_servers': 'nserver: *(.+)',  # list of name servers
+        'status': 'status: *(.+)',   # list of statuses
+        'emails': EMAIL_REGEX,   # list of email s
+        'address': 'address: *(.+)'
+    }
+
     def __init__(self, domain, text):
         if 'No match for "' in text:
             raise DomainNotFoundError(text)
         else:
-            WhoisEntry.__init__(self, domain, text)
+            WhoisEntry.__init__(self, domain, text, self.regex)
+        # Whois doesn't contain the domain, so we need to pull it from the input
+        self['domain_name'] = domain
+        # Clean up nameservers
+        self["name_servers"] = [ns.split(' ')[0].lower() for ns in self["name_servers"]]
+        lines = text.split('\n')
+        self['registrar'] = lines[5]
 
 
 class WhoisCom(WhoisEntry):
@@ -312,7 +336,6 @@ class WhoisNet(WhoisEntry):
             raise DomainNotFoundError(text)
         else:
             WhoisEntry.__init__(self, domain, text)
-
 
 class WhoisOrg(WhoisEntry):
     """Whois parser for .org domains
@@ -364,9 +387,10 @@ class WhoisNl(WhoisEntry):
     """
     regex = {
         'domain_name': 'Domain Name: *(.+)',
+        'whois_server': 'whois: *(.+)',
         'expiration_date': None,
-        'updated_date': None,
-        'creation_date': None,
+        'updated_date': 'changed: *(.+)',
+        'creation_date': 'created: *(.+)',
         'status': 'Status: *(.+)',   # list of statuses
         'name': None,
         'address': None,
@@ -1500,3 +1524,13 @@ class WhoisOnline(WhoisEntry):
             raise DomainNotFoundError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
+
+
+class WhoisIANA(WhoisEntry):
+    """Whois parser for domains that serve their whois through IANA
+    """
+    def __init__(self, domain, text):
+        if 'DOMAIN NOT FOUND' in text:
+            raise DomainNotFoundError(text)
+        else:
+            WhoisEntry.__init__(self, domain, text)

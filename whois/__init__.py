@@ -16,6 +16,15 @@ from .parser import WhoisEntry
 from .whois import NICClient
 
 
+def get_subprocess_whois(domain):
+    r = subprocess.Popen(['whois', domain], stdout=subprocess.PIPE)
+    return r.stdout.read().decode()
+
+
+def get_client_whois(domain):
+    nic_client = NICClient()
+    return nic_client.whois_lookup(None, domain.encode('idna'), 0)
+
 
 def whois(url, command=False):
     # clean domain to expose netloc
@@ -32,12 +41,14 @@ def whois(url, command=False):
         domain = extract_domain(url)
     if command:
         # try native whois command
-        r = subprocess.Popen(['whois', domain], stdout=subprocess.PIPE)
-        text = r.stdout.read().decode()
+        text = get_subprocess_whois(domain)
     else:
-        # try builtin client
-        nic_client = NICClient()
-        text = nic_client.whois_lookup(None, domain.encode('idna'), 0)
+        try:
+            # try builtin client
+            text = get_client_whois(domain)
+        except (socket.gaierror, socket.timeout):
+            # if builtin client fails, fall back on the native command
+            text = get_subprocess_whois(domain)
     return WhoisEntry.load(domain, text)
 
 
